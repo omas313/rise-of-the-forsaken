@@ -18,7 +18,7 @@ public class UIPartyMemberStatus : MonoBehaviour
         battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
     }
 
-    void OnPlayerPartyUpdated(List<PartyMember> party)
+    void OnPlayerPartyUpdated(List<PartyMember> party, PartyMember activeTurnPartyMember)
     {
         for (var i = 0; i < _statusBars.Length; i++)
         {
@@ -26,6 +26,9 @@ public class UIPartyMemberStatus : MonoBehaviour
             var hp = party[i].CharacterStats.CurrentHP.ToString();
             var mp = party[i].CharacterStats.CurrentMP.ToString();
             _statusBars[i].Init(name, hp, mp);
+
+            _statusBars[i].SetCurrentTurnImageActive(party[i] == activeTurnPartyMember);
+            _statusBars[i].SetDeadStatusActive(party[i].IsDead);
         }
     }
 }

@@ -30,7 +30,7 @@ public class Enemy : BattleParticipant
 
     public override IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
-        yield return PerformAttack(playerParty[UnityEngine.Random.Range(0, playerParty.Count)]);
+        yield return PerformAttack(playerParty[playerParty.Count - 1]);
         yield return new WaitForSeconds(0.25f);
     }
 
@@ -47,6 +47,8 @@ public class Enemy : BattleParticipant
     {
         Debug.Log($"{Name} is dying...");
         yield return new WaitForSeconds(0.5f);
+
+        GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 
         private void Awake()

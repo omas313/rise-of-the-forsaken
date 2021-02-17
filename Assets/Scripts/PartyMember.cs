@@ -14,6 +14,8 @@ public class PartyMember : BattleParticipant
     [SerializeField] int _startingHp;
     
     CharacterStats _characterStats;
+    Enemy _selectedEnemyToAttack;
+
 
     [ContextMenu("kill")]
     public void CM_Kill()
@@ -30,19 +32,11 @@ public class PartyMember : BattleParticipant
 
     public override IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
-        while (true)
-        {
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                
-                yield return PerformAttack(enemies[0]);
-                break;
-            }
-            else if (Input.GetKeyDown(KeyCode.Space))
-                break;
+        _selectedEnemyToAttack = null;
 
-            yield return null;
-        }
+        yield return new WaitUntil(() => _selectedEnemyToAttack != null);
+
+        yield return PerformAttack(_selectedEnemyToAttack);
     }
 
     private IEnumerator PerformAttack(BattleParticipant attackReceiver)
@@ -56,14 +50,9 @@ public class PartyMember : BattleParticipant
 
     public override IEnumerator Die()
     {
-        while (true)
-        {
-            Debug.Log($"{Name} is dying...");
-            yield return null;
-
-            if (Input.GetKeyDown(KeyCode.Space))
-                break;
-        }
+        Debug.Log($"{Name} is dying...");
+        yield return new WaitForSeconds(0.5f);
+        GetComponentInChildren<SpriteRenderer>().color = Color.black;
     }
     
     private void Awake()
@@ -73,5 +62,9 @@ public class PartyMember : BattleParticipant
             CurrentSpeed = _speed,
             CurrentHP = _startingHp
         };
+
+        BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
     }
+
+    private void OnEnemyTargetSelected(Enemy enemy) => _selectedEnemyToAttack = enemy;
 }

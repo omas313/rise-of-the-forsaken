@@ -8,14 +8,17 @@ using System.Collections;
 
 public class BattleController : MonoBehaviour
 {
-    public event Action<List<PartyMember>> PlayerPartyUpdated;
+    public event Action<List<PartyMember>, List<Enemy>> BattleStarted;
+    public event Action<List<PartyMember>, PartyMember> PlayerPartyUpdated;
+    public event Action<Enemy> EnemyDied;
+    public event Action<PartyMember> PartyMemberDied;
 
     [SerializeField] TextMeshProUGUI _battleText;
-
-
     [SerializeField] List<PartyMember> _playerParty;
     [SerializeField] List<Enemy> _enemies;
 
+    List<PartyMember> _activePlayerParty = new List<PartyMember>();
+    List<Enemy> _activeEnemies = new List<Enemy>();
     List<BattleParticipant> _battleParticipants = new List<BattleParticipant>();
     BattleParticipant _currentParticipant;
     int _currentIndex;
@@ -38,11 +41,17 @@ public class BattleController : MonoBehaviour
 
     IEnumerator TurnBasedBattle(List<PartyMember> playerParty, List<Enemy> enemies)
     {
-        // _playerParty = playerParty;
-        // _enemies = enemies;
-        PlayerPartyUpdated(_playerParty);
+        yield return new WaitForSeconds(0.25f); // for UI to sub to events
 
+        _playerParty = playerParty;
+        _enemies = enemies;
+
+        _activePlayerParty = new List<PartyMember>(_playerParty);
+        _activeEnemies = new List<Enemy>(_enemies);
+
+        PlayerPartyUpdated?.Invoke(_playerParty, null);
         InitBattleParticipants(_playerParty, _enemies);
+        BattleStarted?.Invoke(_playerParty, _enemies);
 
         _currentIndex = 0;
 
@@ -51,12 +60,17 @@ public class BattleController : MonoBehaviour
             Debug.Log("battle loop");
 
             _currentParticipant = _battleParticipants[_currentIndex];
-            yield return _battleParticipants[_currentIndex].PerformAction(_playerParty, _enemies);
+            if (_currentParticipant is PartyMember)
+                PlayerPartyUpdated?.Invoke(_playerParty, _currentParticipant as PartyMember);
+
+            yield return _battleParticipants[_currentIndex].PerformAction(_activePlayerParty, _activeEnemies);
             yield return new WaitForSeconds(0.5f);
 
             _currentIndex = (_currentIndex + 1) % _battleParticipants.Count;
 
             yield return CheckDeadParticipants();
+
+            PlayerPartyUpdated?.Invoke(_playerParty, null);
             
             if (AllEnemiesAreDead())
             {
@@ -134,9 +148,17 @@ public class BattleController : MonoBehaviour
             _battleParticipants.Remove(deadParticipant);
 
             if (deadParticipant is Enemy)
-                _enemies.Remove((Enemy)deadParticipant);
-            else 
-                _playerParty.Remove((PartyMember)deadParticipant);
+            {
+                var enemy = deadParticipant as Enemy;
+                _activeEnemies.Remove(enemy);
+                EnemyDied?.Invoke(enemy);
+            }
+            else
+            {
+                var partyMember = deadParticipant as PartyMember;
+                _activePlayerParty.Remove(partyMember);
+                PartyMemberDied?.Invoke(partyMember);
+            }
         }
     }
 
