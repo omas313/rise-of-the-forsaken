@@ -12,12 +12,30 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
     Dictionary<Transform, PartyMember> _memberPositions;
     List<Transform> _activePositions;
 
-    int _currentIndex;
     Camera _camera;
+    BattleController _battleController;
+    int _currentIndex;
     bool _isControllingCursor;
+    bool _isLinking;
+
+    public void InvokeUnlinkEvent()
+    {
+        BattleEvents.InvokePartyMemberUnlinked(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
+        MenuCursor.Instance.HideCursor();
+        _isControllingCursor = false;
+    }
+
+    public void StartChoosingLinkTarget()
+    {
+        _isLinking = true;
+        _isControllingCursor = true;
+        _currentIndex = 0;
+        SetCurrentPosition();
+    }
 
     public void StartChoosingTarget()
     {
+        _isLinking = false;
         _isControllingCursor = true;
         _currentIndex = 0;
         SetCurrentPosition();
@@ -27,10 +45,10 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
     {
         _camera = Camera.main;
 
-        var battleController = FindObjectOfType<BattleController>();
-        battleController.BattleStarted += OnBattleStarted;
-        battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
-        battleController.PartyMemberDied += OnPartyMemberDied;
+        _battleController = FindObjectOfType<BattleController>();
+        _battleController.BattleStarted += OnBattleStarted;
+        _battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
+        _battleController.PartyMemberDied += OnPartyMemberDied;
     }
 
     void OnBattleStarted(List<PartyMember> playerParty, List<Enemy> enemies)
@@ -46,7 +64,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
             playerParty[i].transform.position = _activePositions[i].position;
         }
 
-        // _activePositions = _activePositions.OrderBy(p => p.name).ToList();
+        _activePositions = _activePositions.OrderBy(p => p.name).ToList();
     }
 
     void OnPlayerPartyUpdated(List<PartyMember> playerParty, PartyMember currentActiveMember)
@@ -99,11 +117,33 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 
     void ConfirmCurrentSelection()
     {
+        var selectedMember = _memberPositions[_activePositions[_currentIndex]];
+        if (_isLinking && CantLinkTo(selectedMember))
+            return;
+
         MenuCursor.Instance.HideCursor();
         _isControllingCursor = false;
-        var selectedMember = _memberPositions[_activePositions[_currentIndex]];
-        BattleEvents.InvokePartyMemberSelected(selectedMember);
+
+        if (_isLinking)
+        {
+            InvokeRemovalOfOtherLinks(selectedMember);
+            BattleEvents.InvokePartyMembersLinked(selectedMember, _battleController.CurrentActivePartyMember);
+        }
+        else
+            BattleEvents.InvokePartyMemberSelected(selectedMember);
     }
+
+    private void InvokeRemovalOfOtherLinks(PartyMember selectedMember)
+    {
+        if (selectedMember.HasLink)
+            BattleEvents.InvokePartyMemberUnlinked(selectedMember, selectedMember.LinkedPartyMember);
+        if (_battleController.CurrentActivePartyMember.HasLink)
+            BattleEvents.InvokePartyMemberUnlinked(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
+    }
+
+    bool CantLinkTo(PartyMember selectedMember) => 
+        _battleController.IsCurrentActivePartyMember(selectedMember)
+        || (selectedMember.HasLink && _battleController.IsCurrentActivePartyMember(selectedMember.LinkedPartyMember));
 
     void SetCurrentPosition()
     {

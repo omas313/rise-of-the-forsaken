@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8b0e81bd4060af47990529bf0ad52c0, type: 3}
-  m_Name: Water Wave
+  m_Name: GlacierDrop
   m_EditorClassIdentifier: 
   _damage: 10
-  _name: Water Wave
+  _name: Glacier Drop
   _mpCost: 5
   _elements:
-  - {fileID: 11400000, guid: 6b8300678ee9cde48be51e5c441ad470, type: 2}
+  - {fileID: 11400000, guid: 43d6b8147b6b95743b806fe063f19557, type: 2}
   - {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}

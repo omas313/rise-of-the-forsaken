@@ -437,7 +437,7 @@ GameObject:
   - component: {fileID: 209565606}
   - component: {fileID: 209565607}
   m_Layer: 0
-  m_Name: BattleController
+  m_Name: BattleLoopController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -455,7 +455,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &209565607
 MonoBehaviour:
@@ -557,7 +557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _speed
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _attack
@@ -565,7 +565,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: a6e243af4ee39fa4db94df5526c6079c, type: 2}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _startingHp
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _innateElement
@@ -1333,7 +1333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _speed
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _attack
@@ -1341,7 +1341,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: a6e243af4ee39fa4db94df5526c6079c, type: 2}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _startingHp
-      value: 16
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _innateElement
@@ -1503,7 +1503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 687383823}
   m_Layer: 0
-  m_Name: BattleTargetPositionManagers
+  m_Name: BattleManagers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1523,7 +1523,7 @@ Transform:
   - {fileID: 146052006}
   - {fileID: 687450824}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &687450823
 GameObject:
@@ -1536,6 +1536,7 @@ GameObject:
   - component: {fileID: 687450824}
   - component: {fileID: 687450825}
   - component: {fileID: 687450826}
+  - component: {fileID: 687450827}
   m_Layer: 0
   m_Name: PlayerParty
   m_TagString: PlayerPartyBattlePositions
@@ -1572,10 +1573,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _positions:
-  - {fileID: 130498983}
   - {fileID: 48364826}
-  - {fileID: 1568143388}
+  - {fileID: 130498983}
   - {fileID: 1954039206}
+  - {fileID: 1568143388}
   _marker: {fileID: 653796372}
 --- !u!114 &687450826
 MonoBehaviour:
@@ -1595,7 +1596,35 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 687450825}
         m_TargetAssemblyTypeName: PlayerPartyTargetPositionManager, Assembly-CSharp
-        m_MethodName: StartChoosingTarget
+        m_MethodName: StartChoosingLinkTarget
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &687450827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 687450823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 861fab53008d10640af526c53c63ab16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: c4d0e3785c6ae1b4a98b5786a71f625c, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 687450825}
+        m_TargetAssemblyTypeName: PlayerPartyTargetPositionManager, Assembly-CSharp
+        m_MethodName: InvokeUnlinkEvent
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1739,6 +1768,54 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &857288684
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 857288686}
+  - component: {fileID: 857288685}
+  m_Layer: 0
+  m_Name: test
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &857288685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857288684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc8ca16412b53d34f938b3d056a3840a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _store: {fileID: 11400000, guid: 60f05a5f098e5a94897444698c4bf8b4, type: 2}
+  fire: {fileID: 11400000, guid: 6b8300678ee9cde48be51e5c441ad470, type: 2}
+  ice: {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}
+  earth: {fileID: 11400000, guid: 43d6b8147b6b95743b806fe063f19557, type: 2}
+  wind: {fileID: 11400000, guid: 6493b9632953ef742986187a42fd8a76, type: 2}
+--- !u!4 &857288686
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857288684}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 322.94452, y: 158.8205, z: -18.64898}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &865250794 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
@@ -1855,7 +1932,7 @@ Transform:
   - {fileID: 613150523}
   - {fileID: 2043181773}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1008343155
 GameObject:
@@ -2130,7 +2207,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: a6e243af4ee39fa4db94df5526c6079c, type: 2}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _startingHp
-      value: 6
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _innateElement
@@ -2355,6 +2432,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310984589}
   m_CullTransparentMesh: 1
+--- !u!1 &1402063099
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1402063100}
+  m_Layer: 0
+  m_Name: --------------------------
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1402063100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402063099}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1533199556
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2878,6 +2985,7 @@ GameObject:
   - component: {fileID: 1704148044}
   - component: {fileID: 1704148043}
   - component: {fileID: 1704148042}
+  - component: {fileID: 1704148045}
   m_Layer: 5
   m_Name: BattleMenuUI
   m_TagString: Untagged
@@ -2918,11 +3026,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _menuItemPrefab: {fileID: 7327624267369438548, guid: fb8de324aa96fb44da7eaf7cd11de099, type: 3}
-  _menuItemsParent: {fileID: 1310984590}
+  _itemsParent: {fileID: 1310984590}
   _menuItemDefinitions:
   - {fileID: 11400000, guid: 8e8388ae33e5d6843afe2bcd883e3ce7, type: 2}
   - {fileID: 11400000, guid: 07afe2df0ec7e1e45a92f6b88ebd40c4, type: 2}
   - {fileID: 11400000, guid: f8ab0abf66745d949b45957fb736f216, type: 2}
+  _unlinkDefinition: {fileID: 11400000, guid: 53039039bf99f5441a5ece6f1e181843, type: 2}
 --- !u!114 &1704148043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2961,6 +3070,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704148040}
   m_CullTransparentMesh: 1
+--- !u!225 &1704148045
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704148040}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1715400299
 GameObject:
   m_ObjectHideFlags: 0
@@ -3714,12 +3835,16 @@ PrefabInstance:
       value: Nar
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
+      propertyPath: _speed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _attack
       value: 
       objectReference: {fileID: 11400000, guid: a6e243af4ee39fa4db94df5526c6079c, type: 2}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _startingHp
-      value: 12
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _innateElement

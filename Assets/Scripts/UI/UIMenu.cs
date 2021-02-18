@@ -8,26 +8,35 @@ public class UIMenu : MonoBehaviour
     public bool IsActiveMenu => _isActiveMenu;
 
     [SerializeField] UIMenuItem _menuItemPrefab;
-    [SerializeField] Transform _menuItemsParent;
+    [SerializeField] Transform _itemsParent;
     [SerializeField] MenuItemDefinition[] _menuItemDefinitions;
+    [SerializeField] MenuItemDefinition _unlinkDefinition;
 
     List<UIMenuItem> _menuItems = new List<UIMenuItem>();
+    CanvasGroup _canvasGroup;
 
     bool _isActiveMenu;
     int _currentItemIndex;
 
     void Awake()
     {
-        CreateMenu();
+        _canvasGroup = GetComponent<CanvasGroup>();
+        Hide();
         FindObjectOfType<BattleController>().PlayerPartyUpdated += OnPlayerPartyUpdated;
     }
+
+    void Hide() => _canvasGroup.alpha = 0f;
+    
+    void Show() => _canvasGroup.alpha = 1f;
 
     void OnPlayerPartyUpdated(List<PartyMember> partyMembers, PartyMember currentActivePartyMember)
     {
         if (currentActivePartyMember == null)
             return;
 
+        Show();
         _isActiveMenu = true;
+        CreateMenu(currentActivePartyMember);
         StartCoroutine(PlaceCursorAtFirstPosition());
     }
 
@@ -45,14 +54,26 @@ public class UIMenu : MonoBehaviour
     }
 
 
-    void CreateMenu()
+    void CreateMenu(PartyMember currentActivePartyMember)
     {
+        foreach (var oldItems in _itemsParent.GetComponentsInChildren<UIMenuItem>())
+            Destroy(oldItems.gameObject);
+        _menuItems.Clear();
+
         foreach (var menuItemDefinition in _menuItemDefinitions)
         {
-            var menuItem = Instantiate(_menuItemPrefab, _menuItemsParent.transform.position, Quaternion.identity, _menuItemsParent)
+            var menuItem = Instantiate(_menuItemPrefab, _itemsParent.transform.position, Quaternion.identity, _itemsParent)
                 .GetComponent<UIMenuItem>();
             menuItem.Init(menuItemDefinition);
             _menuItems.Add(menuItem);
+        }
+
+        if (currentActivePartyMember.HasLink)
+        {
+            var linkMenuItem = Instantiate(_menuItemPrefab, _itemsParent.transform.position, Quaternion.identity, _itemsParent)
+                    .GetComponent<UIMenuItem>();
+            linkMenuItem.Init(_unlinkDefinition);
+            _menuItems.Add(linkMenuItem);
         }
     }
 

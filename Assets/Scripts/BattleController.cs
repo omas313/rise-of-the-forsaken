@@ -13,6 +13,8 @@ public class BattleController : MonoBehaviour
     public event Action<Enemy> EnemyDied;
     public event Action<PartyMember> PartyMemberDied;
 
+    public PartyMember CurrentActivePartyMember { get; private set; }
+
     [SerializeField] TextMeshProUGUI _battleText;
     [SerializeField] List<PartyMember> _playerParty;
     [SerializeField] List<Enemy> _enemies;
@@ -22,6 +24,8 @@ public class BattleController : MonoBehaviour
     List<BattleParticipant> _battleParticipants = new List<BattleParticipant>();
     BattleParticipant _currentParticipant;
     int _currentIndex;
+
+    public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
 
     public void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies)
     {
@@ -61,7 +65,13 @@ public class BattleController : MonoBehaviour
 
             _currentParticipant = _battleParticipants[_currentIndex];
             if (_currentParticipant is PartyMember)
-                PlayerPartyUpdated?.Invoke(_playerParty, _currentParticipant as PartyMember);
+            {
+                var partyMember = _currentParticipant as PartyMember;
+                PlayerPartyUpdated?.Invoke(_playerParty, partyMember);
+                CurrentActivePartyMember = partyMember;   
+            }
+            else
+                CurrentActivePartyMember = null;   
 
             yield return new WaitForSeconds(0.25f);
             yield return _battleParticipants[_currentIndex].PerformAction(_activePlayerParty, _activeEnemies);

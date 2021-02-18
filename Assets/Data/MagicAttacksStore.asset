@@ -15,7 +15,9 @@ MonoBehaviour:
   _magicAttacks:
   - {fileID: 11400000, guid: d2adb172cdcb6b9408e1b07e63be82b4, type: 2}
   - {fileID: 11400000, guid: 278c4a958eb99c04f87e694767664cd1, type: 2}
+  - {fileID: 11400000, guid: f2cfa3df0a924d04fa72a8e1070f0a6a, type: 2}
   - {fileID: 11400000, guid: 01b1adae21a63fd4087b81c349c3377c, type: 2}
+  - {fileID: 11400000, guid: 1f73e5b4bb75fbd45a39e7410b467d1e, type: 2}
   - {fileID: 11400000, guid: 7e87c3a81b654924b9d95a22e7551a4f, type: 2}
   - {fileID: 11400000, guid: 3a626e2dbcad5f14a8c6214c270fa356, type: 2}
   - {fileID: 11400000, guid: 16a38573f7bfd5b4197a38d84b6074a8, type: 2}
