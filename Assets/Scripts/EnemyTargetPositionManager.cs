@@ -7,6 +7,7 @@ using UnityEngine;
 public class EnemyTargetPositionManager : MonoBehaviour
 {
     [SerializeField] Transform[] _positions;
+    [SerializeField] GameEvent _backEvent;
 
     Dictionary<Transform, Enemy> _enemyPositions;
     List<Transform> _activePositions;
@@ -69,7 +70,18 @@ public class EnemyTargetPositionManager : MonoBehaviour
         else if (Input.GetButtonDown("Down"))
             GoToNextPosition();
         else if (Input.GetButtonDown("Confirm"))
-            ConfirmCurrentSelection();
+            ConfirmCurrentSelection();    
+        else if (Input.GetButtonDown("Back"))
+            GoBack();
+    }
+    
+    void GoBack()
+    {
+        if (_backEvent != null)
+            _backEvent.Raise();
+            
+        MenuCursor.Instance.HideCursor();
+        _isControllingCursor = false;
     }
 
     void GoToPreviousPosition()

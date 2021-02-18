@@ -8,6 +8,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 {
     [SerializeField] Transform[] _positions;
     [SerializeField] GameObject _marker;
+    [SerializeField] GameEvent _backEvent;
 
     Dictionary<Transform, PartyMember> _memberPositions;
     List<Transform> _activePositions;
@@ -100,7 +101,18 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
         else if (Input.GetButtonDown("Down"))
             GoToNextPosition();
         else if (Input.GetButtonDown("Confirm"))
-            ConfirmCurrentSelection();
+            ConfirmCurrentSelection();    
+        else if (Input.GetButtonDown("Back"))
+            GoBack();
+    }
+
+    void GoBack()
+    {
+        if (_backEvent != null)
+            _backEvent.Raise();
+
+        MenuCursor.Instance.HideCursor();
+        _isControllingCursor = false;
     }
 
     void GoToPreviousPosition()

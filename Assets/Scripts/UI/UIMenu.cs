@@ -18,6 +18,13 @@ public class UIMenu : MonoBehaviour
     bool _isActiveMenu;
     int _currentItemIndex;
 
+    public void ActivateMenu()
+    {
+        Show();
+        _isActiveMenu = true;
+        StartCoroutine(PlaceCursorAtFirstPosition());
+    }
+
     void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
@@ -34,10 +41,8 @@ public class UIMenu : MonoBehaviour
         if (currentActivePartyMember == null)
             return;
 
-        Show();
-        _isActiveMenu = true;
         CreateMenu(currentActivePartyMember);
-        StartCoroutine(PlaceCursorAtFirstPosition());
+        ActivateMenu();
     }
 
     void Update()
@@ -49,7 +54,7 @@ public class UIMenu : MonoBehaviour
             GoToPreviousItem();
         else if (Input.GetButtonDown("Down"))
             GoToNextItem();
-        else if (Input.GetButtonDown("Confirm"))
+        else if (Input.GetButtonDown("Confirm") || Input.GetButtonDown("Right"))
             ConfirmCurrentSelection();
     }
 

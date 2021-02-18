@@ -8,6 +8,7 @@ public class UIMagicMenu : MonoBehaviour
     [SerializeField] GameEvent _uiMenuMagicSelected;
     [SerializeField] UIMagicAttackItem _magicAttackItemPrefab;
     [SerializeField] Transform _itemsParent;
+    [SerializeField] GameEvent _backEvent;
 
     List<UIMagicAttackItem> _menuItems = new List<UIMagicAttackItem>();
     BattleController _battleController;
@@ -69,9 +70,13 @@ public class UIMagicMenu : MonoBehaviour
             GoBack();
     }
 
-    private void GoBack()
+    void GoBack()
     {
-        throw new NotImplementedException();
+        if (_backEvent != null)
+            _backEvent.Raise();
+
+        _isActiveMenu = false;
+        Hide();
     }
 
     void GoToNextItem()
