@@ -99,11 +99,10 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 
     void ConfirmCurrentSelection()
     {
-        // invoke event
+        MenuCursor.Instance.HideCursor();
         _isControllingCursor = false;
         var selectedMember = _memberPositions[_activePositions[_currentIndex]];
         BattleEvents.InvokePartyMemberSelected(selectedMember);
-        Debug.Log($"selected {selectedMember.Name}");
     }
 
     void SetCurrentPosition()

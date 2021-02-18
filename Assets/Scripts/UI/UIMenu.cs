@@ -16,15 +16,9 @@ public class UIMenu : MonoBehaviour
     bool _isActiveMenu;
     int _currentItemIndex;
 
-
-    public void Init()
-    {
-        CreateMenu();
-    }
-
     void Awake()
     {
-        Init();
+        CreateMenu();
         FindObjectOfType<BattleController>().PlayerPartyUpdated += OnPlayerPartyUpdated;
     }
 

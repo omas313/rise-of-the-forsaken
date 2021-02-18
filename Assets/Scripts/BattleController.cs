@@ -63,8 +63,9 @@ public class BattleController : MonoBehaviour
             if (_currentParticipant is PartyMember)
                 PlayerPartyUpdated?.Invoke(_playerParty, _currentParticipant as PartyMember);
 
+            yield return new WaitForSeconds(0.25f);
             yield return _battleParticipants[_currentIndex].PerformAction(_activePlayerParty, _activeEnemies);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
 
             _currentIndex = (_currentIndex + 1) % _battleParticipants.Count;
 

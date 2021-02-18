@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attacks: []
+  _magicAttacksStore: {fileID: 11400000, guid: 60f05a5f098e5a94897444698c4bf8b4, type: 2}
+  _innateElement: {fileID: 0}
   _name: 
   _speed: 2
   _startingHp: 0

@@ -86,11 +86,10 @@ public class EnemyTargetPositionManager : MonoBehaviour
 
     void ConfirmCurrentSelection()
     {
-        // invoke event
+        MenuCursor.Instance.HideCursor();
         _isControllingCursor = false;
         var selectedEnemy = _enemyPositions[_activePositions[_currentIndex]];
         BattleEvents.InvokeEnemyTargetSelected(selectedEnemy);
-        Debug.Log($"selected {selectedEnemy.Name}");
     }
 
     void SetCurrentPosition()
