@@ -9,10 +9,8 @@ public abstract class BattleParticipant : MonoBehaviour
     public abstract bool IsDead { get; }
     public abstract CharacterStats CharacterStats { get; }
     public AttackDefinition[] Attacks => attacks;
-
     
     [SerializeField] protected AttackDefinition[] attacks;
-
 
     public abstract IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies);
     public abstract IEnumerator Die();

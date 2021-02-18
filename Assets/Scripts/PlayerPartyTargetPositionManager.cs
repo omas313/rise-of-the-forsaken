@@ -133,7 +133,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
             BattleEvents.InvokePartyMemberSelected(selectedMember);
     }
 
-    private void InvokeRemovalOfOtherLinks(PartyMember selectedMember)
+    void InvokeRemovalOfOtherLinks(PartyMember selectedMember)
     {
         if (selectedMember.HasLink)
             BattleEvents.InvokePartyMemberUnlinked(selectedMember, selectedMember.LinkedPartyMember);

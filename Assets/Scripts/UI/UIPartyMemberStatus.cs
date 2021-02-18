@@ -5,30 +5,56 @@ using UnityEngine;
 
 public class UIPartyMemberStatus : MonoBehaviour
 {
-    UIPartyMemberStatusBar[] _statusBars;
-
-    void Awake()
-    {
-        _statusBars = GetComponentsInChildren<UIPartyMemberStatusBar>();
-    }
+    Dictionary<PartyMember, UIPartyMemberStatusBar> _playerBars;
 
     void Start()
     {
         var battleController = FindObjectOfType<BattleController>();
         battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
+
+        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
+    }
+
+    void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
+    {
+        _playerBars[member1].SetLinkedStatus(member1.InnateElement.Color, member2.InnateElement.Color);
+        _playerBars[member2].SetLinkedStatus(member1.InnateElement.Color, member2.InnateElement.Color);
+    }
+
+    void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)
+    {
+        _playerBars[member1].HideLinkedStatus();
+        _playerBars[member2].HideLinkedStatus();
     }
 
     void OnPlayerPartyUpdated(List<PartyMember> party, PartyMember activeTurnPartyMember)
     {
-        for (var i = 0; i < _statusBars.Length; i++)
-        {
-            var name = party[i].Name;
-            var hp = party[i].CharacterStats.CurrentHP.ToString();
-            var mp = party[i].CharacterStats.CurrentMP.ToString();
-            _statusBars[i].Init(name, hp, mp);
+        if (_playerBars == null)
+            InitDictionary(party);
 
-            _statusBars[i].SetCurrentTurnImageActive(party[i] == activeTurnPartyMember);
-            _statusBars[i].SetDeadStatusActive(party[i].IsDead);
+        foreach (var pair in _playerBars)
+        {
+            var partyMember = pair.Key;
+            var bar = pair.Value;
+
+            var name = partyMember.Name;
+            var hp = partyMember.HasLink ? partyMember.PartyMemberStats.LinkedHP.ToString() : partyMember.CharacterStats.CurrentHP.ToString();
+            var mp = partyMember.HasLink ? partyMember.PartyMemberStats.LinkedMP.ToString() : partyMember.CharacterStats.CurrentMP.ToString();
+            
+            bar.Init(name, hp, mp);            
+            bar.SetCurrentTurnImageActive(partyMember == activeTurnPartyMember);
+            bar.SetDeadStatusActive(partyMember.IsDead);
         }
+
+    }
+
+    private void InitDictionary(List<PartyMember> party)
+    {
+        _playerBars = new Dictionary<PartyMember, UIPartyMemberStatusBar>();
+        var bars = GetComponentsInChildren<UIPartyMemberStatusBar>();
+
+        for (var i = 0; i < party.Count; i++)
+            _playerBars[party[i]] = bars[i];
     }
 }

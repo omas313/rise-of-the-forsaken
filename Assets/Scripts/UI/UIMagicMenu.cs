@@ -10,6 +10,7 @@ public class UIMagicMenu : MonoBehaviour
     [SerializeField] Transform _itemsParent;
 
     List<UIMagicAttackItem> _menuItems = new List<UIMagicAttackItem>();
+    BattleController _battleController;
     CanvasGroup _canvasGroup;
     bool _isActiveMenu;
     int _currentItemIndex;
@@ -29,8 +30,8 @@ public class UIMagicMenu : MonoBehaviour
 
     void Start()
     {
-        var battleController = FindObjectOfType<BattleController>();
-        battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
+        _battleController = FindObjectOfType<BattleController>();
+        _battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
     }
 
     void Hide() => _canvasGroup.alpha = 0f;
@@ -48,7 +49,7 @@ public class UIMagicMenu : MonoBehaviour
         foreach (var magicAttack in currentActiveMember.MagicAttacks)
         {
             var menuItem = Instantiate(_magicAttackItemPrefab, _itemsParent.transform.position, Quaternion.identity, _itemsParent);
-            menuItem.Init(magicAttack);
+            menuItem.Init(magicAttack, currentActiveMember.HasManaFor(magicAttack));
             _menuItems.Add(menuItem);
         }
     }
@@ -62,8 +63,15 @@ public class UIMagicMenu : MonoBehaviour
             GoToPreviousItem();
         else if (Input.GetButtonDown("Down"))
             GoToNextItem();
-        else if (Input.GetButtonDown("Confirm"))
+        else if (Input.GetButtonDown("Confirm") || Input.GetButtonDown("Right"))
             ConfirmCurrentSelection();    
+        else if (Input.GetButtonDown("Back") || Input.GetButtonDown("Left"))
+            GoBack();
+    }
+
+    private void GoBack()
+    {
+        throw new NotImplementedException();
     }
 
     void GoToNextItem()
@@ -80,10 +88,15 @@ public class UIMagicMenu : MonoBehaviour
 
     void ConfirmCurrentSelection()
     {
+        var magicAttack = _menuItems[_currentItemIndex].MagicAttackDefinition;
+
+        if (!_battleController.CurrentActivePartyMember.HasManaFor(magicAttack))
+            return;
+
         if (_uiMenuMagicSelected != null)
             _uiMenuMagicSelected.Raise();
             
-        BattleEvents.InvokeMagicAttackSelected(_menuItems[_currentItemIndex].MagicAttackDefinition);
+        BattleEvents.InvokeMagicAttackSelected(magicAttack);
         _isActiveMenu = false;
         Hide();
     }

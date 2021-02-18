@@ -27,20 +27,12 @@ public class BattleController : MonoBehaviour
 
     public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
 
-    public void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies)
-    {
-        StartCoroutine(TurnBasedBattle(playerParty, enemies));
-    }
+    public void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies) => StartCoroutine(TurnBasedBattle(playerParty, enemies));
 
     void Start()
     {
         // Gaemmanager will call this?
         StartBattle(_playerParty, _enemies);
-    }
-
-    void Update()
-    {
-        SetBattleText();
     }
 
     IEnumerator TurnBasedBattle(List<PartyMember> playerParty, List<Enemy> enemies)
@@ -64,11 +56,13 @@ public class BattleController : MonoBehaviour
             Debug.Log("battle loop");
 
             _currentParticipant = _battleParticipants[_currentIndex];
+
             if (_currentParticipant is PartyMember)
             {
                 var partyMember = _currentParticipant as PartyMember;
-                PlayerPartyUpdated?.Invoke(_playerParty, partyMember);
                 CurrentActivePartyMember = partyMember;   
+                yield return partyMember.PreTurnAction(_activePlayerParty, _activeEnemies);
+                PlayerPartyUpdated?.Invoke(_playerParty, partyMember);
             }
             else
                 CurrentActivePartyMember = null;   
@@ -76,6 +70,9 @@ public class BattleController : MonoBehaviour
             yield return new WaitForSeconds(0.25f);
             yield return _battleParticipants[_currentIndex].PerformAction(_activePlayerParty, _activeEnemies);
             yield return new WaitForSeconds(0.25f);
+
+             if (_currentParticipant is PartyMember)
+                PlayerPartyUpdated?.Invoke(_playerParty, null);
 
             _currentIndex = (_currentIndex + 1) % _battleParticipants.Count;
 
@@ -187,12 +184,9 @@ public class BattleController : MonoBehaviour
             
         _battleText.SetText(stringBuilder.ToString());
     }
-
-    [ContextMenu("kill all enemies")]
-    public void CM_KillAllEnemies()
+    void Update()
     {
-        foreach (var enemy in _enemies)
-            enemy.CharacterStats.CurrentHP = 0;
+        SetBattleText();
     }
 }
 

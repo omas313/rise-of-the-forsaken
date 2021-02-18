@@ -11,10 +11,12 @@ public class UIMagicAttackItem : MonoBehaviour
     [SerializeField] TextMeshProUGUI _mpValue;
     [SerializeField] Transform _cursorPosition;
 
-    public void Init(MagicAttackDefinition magicAttackDefinition) 
+    public void Init(MagicAttackDefinition magicAttackDefinition, bool hasManaToCast) 
     {
         MagicAttackDefinition = magicAttackDefinition;
         _labelText.SetText(magicAttackDefinition.Name);
         _mpValue.SetText(magicAttackDefinition.MPCost.ToString());
+
+        _mpValue.color = hasManaToCast ? Color.white : Color.gray;
     }
 }
