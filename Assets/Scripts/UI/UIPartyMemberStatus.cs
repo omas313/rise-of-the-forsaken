@@ -18,8 +18,8 @@ public class UIPartyMemberStatus : MonoBehaviour
 
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
     {
-        _playerBars[member1].SetLinkedStatus(member1.InnateElement.Color, member2.InnateElement.Color);
-        _playerBars[member2].SetLinkedStatus(member1.InnateElement.Color, member2.InnateElement.Color);
+        _playerBars[member1].SetLinkedStatus(member1.Element.Color, member2.Element.Color);
+        _playerBars[member2].SetLinkedStatus(member1.Element.Color, member2.Element.Color);
     }
 
     void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)

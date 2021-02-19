@@ -1,31 +1,16 @@
 fileFormatVersion: 2
-guid: 99c3f2a2c7edf1c4bb538d11da25fdb1
+guid: 2859fb2d0b4b0bd44976c14dd7796b5f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7682985921495936434
-    second: red cape attack sprite sheet_0
+      213: -3597069948509535083
+    second: idle_red_0
   - first:
-      213: -209586637153288787
-    second: red cape attack sprite sheet_1
+      213: -7442268620241832525
+    second: idle_red_1
   - first:
-      213: -6992588831471662820
-    second: red cape attack sprite sheet_2
-  - first:
-      213: 978530487515932671
-    second: red cape attack sprite sheet_3
-  - first:
-      213: 3804547125901023688
-    second: red cape attack sprite sheet_4
-  - first:
-      213: -1081458819634931377
-    second: red cape attack sprite sheet_5
-  - first:
-      213: 1023586580995536175
-    second: red cape attack sprite sheet_6
-  - first:
-      213: -547553368759478426
-    second: red cape attack sprite sheet_7
+      213: 7857267455494464408
+    second: idle_red_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -92,7 +77,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -104,7 +89,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -116,7 +101,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -128,7 +113,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -140,7 +125,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -151,70 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: red cape attack sprite sheet_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e4258e6b20d806590800000000000000
-      internalID: -7682985921495936434
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: red cape attack sprite sheet_1
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dad3fce5016671df0800000000000000
-      internalID: -209586637153288787
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: red cape attack sprite sheet_2
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 256
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c1984cf818555fe90800000000000000
-      internalID: -6992588831471662820
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: red cape attack sprite sheet_3
+      name: idle_red_0
       rect:
         serializedVersion: 2
         x: 0
@@ -228,14 +150,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ff7e64e3b40749d00800000000000000
-      internalID: 978530487515932671
+      spriteID: 5944bde90f3a41ec0800000000000000
+      internalID: -3597069948509535083
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: red cape attack sprite sheet_4
+      name: idle_red_1
       rect:
         serializedVersion: 2
         x: 128
@@ -249,35 +171,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8c9509224777cc430800000000000000
-      internalID: 3804547125901023688
+      spriteID: 3b5f277ee10c7b890800000000000000
+      internalID: -7442268620241832525
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: red cape attack sprite sheet_5
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 128
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f495270fee2edf0f0800000000000000
-      internalID: -1081458819634931377
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: red cape attack sprite sheet_6
+      name: idle_red_2
       rect:
         serializedVersion: 2
         x: 0
@@ -291,29 +192,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f25781d7292843e00800000000000000
-      internalID: 1023586580995536175
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: red cape attack sprite sheet_7
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 667d587bc13b668f0800000000000000
-      internalID: -547553368759478426
+      spriteID: 8932cf50f1f9a0d60800000000000000
+      internalID: 7857267455494464408
       vertices: []
       indices: 
       edges: []

@@ -7,6 +7,7 @@ using UnityEngine;
 public class LinkViewer : MonoBehaviour
 {
     [SerializeField] LineRenderer _linePrefab;
+    [SerializeField] ParticleSystem _particlesPrefab;
     PartyMember[] _party;
     List<LinkLine> _linkLines = new List<LinkLine>();
 
@@ -25,13 +26,23 @@ public class LinkViewer : MonoBehaviour
 
     void CreateLinkLine(PartyMember member1, PartyMember member2)
     {
+        var midPoint = member1.transform.position + (member2.transform.position - member1.transform.position) * 0.5f;
         var line = Instantiate(_linePrefab, Vector3.zero, Quaternion.identity, transform);
+        var particles = Instantiate(_particlesPrefab, midPoint, Quaternion.identity, line.transform);
         
         line.SetPosition(0, member1.transform.position);
         line.SetPosition(1, member2.transform.position);
 
-        line.colorGradient = CreateGradient(member2.InnateElement.Color, member1.InnateElement.Color);
-        _linkLines.Add(new LinkLine(member1, member2, line));
+        var gradient = CreateGradient(member1.Element.Color, member2.Element.Color);
+
+        var main = particles.main;
+        var minMaxGradient = new ParticleSystem.MinMaxGradient(gradient);;
+        minMaxGradient.mode = ParticleSystemGradientMode.RandomColor;;
+        main.startColor = minMaxGradient;
+
+        line.colorGradient = gradient;
+
+        _linkLines.Add(new LinkLine(member1, member2, line, particles));
     }
 
     Gradient CreateGradient(Color color1, Color color2)
@@ -40,9 +51,9 @@ public class LinkViewer : MonoBehaviour
 
         var colorkey = new GradientColorKey[2];
         colorkey[0].color = color1;
-        colorkey[0].time = 0f;
+        colorkey[0].time = 0.45f;
         colorkey[1].color = color2;
-        colorkey[0].time = 1f;
+        colorkey[1].time = 0.55f;
 
         var alphaKey = new GradientAlphaKey[2];
         alphaKey[0].alpha = 1f;
@@ -57,13 +68,11 @@ public class LinkViewer : MonoBehaviour
 
     void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)
     {
-        // foreach (var line in _linkLines)
-        //     Debug.Log($"line: {line.Members[0]} + {line.Members[1]}");
-
         var linkLine = _linkLines.Where(ll => ll.Members.Contains(member1) && ll.Members.Contains(member2)).FirstOrDefault();
         if (linkLine != null)
         {
             Destroy(linkLine.Line);
+            Destroy(linkLine.Particles);
             _linkLines.Remove(linkLine);
         }
     }

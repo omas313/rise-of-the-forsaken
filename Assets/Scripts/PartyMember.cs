@@ -11,7 +11,7 @@ public class PartyMember : BattleParticipant
     public override bool IsDead => _stats.CurrentHP <= 0;
 
     public PartyMemberStats PartyMemberStats => _stats;
-    public Element InnateElement => _innateElement;
+    public Element Element => _innateElement;
     public MagicAttackDefinition[] MagicAttacks => _magicAttacks;
     public PartyMember LinkedPartyMember => _linkedPartyMember;
     public bool HasLink => _linkedPartyMember != null;
@@ -197,7 +197,7 @@ public class PartyMember : BattleParticipant
     {
         var linkedAttacks = _magicAttacksStore.GetMagicAttacksWithElements(
             _innateElement,
-            _linkedPartyMember.InnateElement);
+            _linkedPartyMember.Element);
 
         _magicAttacks = _magicAttacks.Concat(linkedAttacks).ToArray();
     }
