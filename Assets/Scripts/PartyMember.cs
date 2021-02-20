@@ -8,6 +8,7 @@ public class PartyMember : BattleParticipant
 {
     const string CAST_ANIMATION_BOOL_KEY = "IsCastingSpell";
     const string HIT_ANIMATION_BOOL_KEY = "IsGettingHit";
+    const string DEATH_ANIMATION_BOOL_KEY = "IsDead";
     const string ATTACK_ANIMATION_TRIGGER_KEY = "Attack";
 
     public override string Name => _name;
@@ -29,6 +30,7 @@ public class PartyMember : BattleParticipant
     [SerializeField] PartyMemberStats _stats;
     [SerializeField] Transform _spellCasePoint;
     [SerializeField] ParticleSystem _castParticles;
+    [SerializeField] ParticleSystem _deathParticles;
     
     Enemy _selectedEnemyToAttack;
     MagicAttackDefinition _selectedMagicAttack;
@@ -71,6 +73,9 @@ public class PartyMember : BattleParticipant
 
         _animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
 
+        if (_linkedPartyMember != null)
+            _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
+
         if (HasLink)
         {
             _stats.ReduceLinkedHP(attack.Damage);
@@ -87,13 +92,19 @@ public class PartyMember : BattleParticipant
         yield return new WaitForSeconds(0.5f);
 
         _animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
+        if (_linkedPartyMember != null)
+            _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
     }
 
     public override IEnumerator Die()
     {
-        Debug.Log($"{Name} is dying...");
-        yield return new WaitForSeconds(0.5f);
-        GetComponentInChildren<SpriteRenderer>().color = Color.black;
+        if (HasLink)
+            Debug.Log($"Error: {Name} dying with link to {_linkedPartyMember.Name}");
+
+        _animator.SetBool(DEATH_ANIMATION_BOOL_KEY, true);
+        yield return new WaitForSeconds(0.25f); 
+        _deathParticles.Play();
+        yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f);
     }
 
     public bool HasManaFor(MagicAttackDefinition magicAttack)
@@ -117,6 +128,12 @@ public class PartyMember : BattleParticipant
             _castParticles.Play();
             _animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
 
+            if (_selectedMagicAttack.Elements.Length > 1)
+            {
+                _linkedPartyMember._animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
+                _linkedPartyMember._castParticles.Play();
+            }
+
             // cast time can be added to magic attack def
             yield return new WaitForSeconds(2f); 
             // let magic SO do the casting and spawning
@@ -125,12 +142,18 @@ public class PartyMember : BattleParticipant
             attackReceiver.TurnOffCollider();
             _castParticles.Stop();
             _animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
+
+            if (_selectedMagicAttack.Elements.Length > 1)
+            {
+                _linkedPartyMember._animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
+                _linkedPartyMember._castParticles.Stop();
+            }
         }
         else
         {
             _animator.SetTrigger(ATTACK_ANIMATION_TRIGGER_KEY);
             yield return new WaitForSeconds(0.2f); 
-            yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+            yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
         }
     
         // can let magic SO do the damage dealing
@@ -172,6 +195,48 @@ public class PartyMember : BattleParticipant
         }
     }
 
+    IEnumerator Link(PartyMember partyMember)
+    {
+        // do animations and other stuff
+
+        if (partyMember.HasLink)
+            yield return partyMember.TryUnlink();
+        if (HasLink)
+            yield return TryUnlink();
+
+        HandleLink(partyMember);
+        partyMember.HandleLink(this);
+
+        // Debug.Log($"{Name} linked to {partyMember.Name}");
+        yield return new WaitForSeconds(0.5f);    
+    }
+
+    IEnumerator TryUnlink()
+    {
+        // do animations and other stuff
+        if (_linkedPartyMember == null)
+            Debug.Log("Error: Requested to unlink but no linked member registered");
+
+        BattleEvents.InvokePartyMemberUnlinked(this, _linkedPartyMember);
+
+        yield return _linkedPartyMember.Unlink();
+        yield return Unlink();
+
+        yield return new WaitForSeconds(0.5f);    
+    }
+
+    IEnumerator Unlink()
+    {
+        Debug.Log($"{Name} unlinked from {_linkedPartyMember.Name}");
+
+        // do animations and stuff
+        _linkedPartyMember = null;
+        SetMagicAttacks();
+        UnsetLinkedStats();
+        yield return new WaitForSeconds(0.25f);
+    }
+
+
     void ConsumeMP(int amount)
     {
         if (HasLink)
@@ -192,45 +257,6 @@ public class PartyMember : BattleParticipant
         }
         else
             _stats.IncreaseCurrentMP(1);
-    }
-
-    IEnumerator Link(PartyMember partyMember)
-    {
-        // do animations and other stuff
-
-        if (partyMember.HasLink)
-            yield return partyMember.TryUnlink();
-        if (HasLink)
-            yield return TryUnlink();
-
-        HandleLink(partyMember);
-        partyMember.HandleLink(this);
-
-        Debug.Log($"{Name} linked to {partyMember.Name}");
-        yield return new WaitForSeconds(0.5f);    
-    }
-
-    IEnumerator TryUnlink()
-    {
-        // do animations and other stuff
-        if (_linkedPartyMember == null)
-            Debug.Log("Error: Requested to unlink but no linked member registered");
-
-        yield return _linkedPartyMember.Unlink();
-        yield return Unlink();
-
-        yield return new WaitForSeconds(0.5f);    
-    }
-
-    IEnumerator Unlink()
-    {
-        Debug.Log($"{Name} unlinked from {_linkedPartyMember.Name}");
-
-        // do animations and stuff
-        _linkedPartyMember = null;
-        SetMagicAttacks();
-        UnsetLinkedStats();
-        yield return new WaitForSeconds(0.25f);
     }
 
     void HandleLink(PartyMember linkedMember)

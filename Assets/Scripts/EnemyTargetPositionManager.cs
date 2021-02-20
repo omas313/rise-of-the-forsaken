@@ -46,6 +46,15 @@ public class EnemyTargetPositionManager : MonoBehaviour
         }
 
         _activePositions = _activePositions.OrderBy(p => p.name).ToList();
+
+        SetEnemySortingOrders();
+    }
+
+    void SetEnemySortingOrders()
+    {
+        int i = 0;
+        foreach (var position in _activePositions)
+            _enemyPositions[position].GetComponentInChildren<SpriteRenderer>().sortingOrder = i++;
     }
 
     void OnEnemyDied(Enemy enemy)

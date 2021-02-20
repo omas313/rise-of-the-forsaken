@@ -23,19 +23,25 @@ public class BattleController : MonoBehaviour
     List<BattleParticipant> _battleParticipants = new List<BattleParticipant>();
     BattleParticipant _currentParticipant;
     int _currentIndex;
-
-    public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
+    bool _hasBattleStarted;
 
     public void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies) => StartCoroutine(TurnBasedBattle(playerParty, enemies));
 
+    public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
+
     void Start()
     {
-        // Gaemmanager will call this?
+        // Gaemmanager will call these?
+        if (_enemies == null || _enemies.Count == 0)
+            _enemies = FindObjectsOfType<Enemy>().ToList();
+
         StartBattle(_playerParty, _enemies);
     }
 
     IEnumerator TurnBasedBattle(List<PartyMember> playerParty, List<Enemy> enemies)
     {
+        _hasBattleStarted = true;
+
         yield return new WaitForSeconds(0.25f); // for UI to sub to events
 
         _playerParty = playerParty;
@@ -185,6 +191,9 @@ public class BattleController : MonoBehaviour
     }
     void Update()
     {
+        if (!_hasBattleStarted)
+            Debug.Log("battle was not started");
+
         // SetBattleText();
     }
 }
