@@ -17,3 +17,6 @@ MonoBehaviour:
   _mpCost: 2
   _elements:
   - {fileID: 11400000, guid: 6493b9632953ef742986187a42fd8a76, type: 2}
+  _effectPrefab: {fileID: 7807944414959136323, guid: dc8433c509f5d684a90f79de8ed2a1f6, type: 3}
+  _magicAttackTargetType: 0
+  _areaEffectSpawnPosition: {x: 0, y: 0, z: 0}

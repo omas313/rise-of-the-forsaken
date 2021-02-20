@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8b0e81bd4060af47990529bf0ad52c0, type: 3}
-  m_Name: WaterWave
+  m_Name: FrostWind
   m_EditorClassIdentifier: 
-  _damage: 10
-  _name: Water Wave
-  _mpCost: 5
+  _damage: 6
+  _name: FrostWind
+  _mpCost: 6
   _elements:
-  - {fileID: 11400000, guid: 6b8300678ee9cde48be51e5c441ad470, type: 2}
+  - {fileID: 11400000, guid: 6493b9632953ef742986187a42fd8a76, type: 2}
   - {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}
+  _effectPrefab: {fileID: 7222816897734850429, guid: 7c008066dfb502240ac1aa3424b1f2c2, type: 3}
+  _magicAttackTargetType: 1

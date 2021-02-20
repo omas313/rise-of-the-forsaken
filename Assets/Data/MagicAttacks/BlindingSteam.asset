@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8b0e81bd4060af47990529bf0ad52c0, type: 3}
-  m_Name: WindOfFrost
+  m_Name: BlindingSteam
   m_EditorClassIdentifier: 
-  _damage: 10
-  _name: Wind Of Frost
-  _mpCost: 5
+  _damage: 7
+  _name: Blinding Steam
+  _mpCost: 7
   _elements:
-  - {fileID: 11400000, guid: 6493b9632953ef742986187a42fd8a76, type: 2}
+  - {fileID: 11400000, guid: 6b8300678ee9cde48be51e5c441ad470, type: 2}
   - {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}
+  _effectPrefab: {fileID: 3217547562190418373, guid: 4a6e060e2e33852499376f38288af541, type: 3}
+  _magicAttackTargetType: 1

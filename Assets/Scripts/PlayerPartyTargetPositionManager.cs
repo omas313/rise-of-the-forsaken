@@ -70,12 +70,20 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 
     void OnPlayerPartyUpdated(List<PartyMember> playerParty, PartyMember currentActiveMember)
     {
-        if (currentActiveMember != null)
+        if (currentActiveMember == null)
+            HideMarker();
+        else
             PlaceMarkerAtMember(currentActiveMember);
+    }
+
+    private void HideMarker()
+    {
+        _marker.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 
     void PlaceMarkerAtMember(PartyMember currentActiveMember)
     {
+        _marker.GetComponentInChildren<SpriteRenderer>().enabled = true;
         _marker.transform.position = currentActiveMember.transform.position;
     }
 

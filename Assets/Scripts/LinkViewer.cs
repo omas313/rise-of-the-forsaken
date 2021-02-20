@@ -30,14 +30,16 @@ public class LinkViewer : MonoBehaviour
         var line = Instantiate(_linePrefab, Vector3.zero, Quaternion.identity, transform);
         var particles = Instantiate(_particlesPrefab, midPoint, Quaternion.identity, line.transform);
         
-        line.SetPosition(0, member1.transform.position);
-        line.SetPosition(1, member2.transform.position);
+        var directionVector = (member2.transform.position - member1.transform.position).normalized;
+
+        line.SetPosition(0, member1.transform.position + directionVector * 0.5f);
+        line.SetPosition(1, member2.transform.position - directionVector * 0.5f);
 
         var gradient = CreateGradient(member1.Element.Color, member2.Element.Color);
 
         var main = particles.main;
-        var minMaxGradient = new ParticleSystem.MinMaxGradient(gradient);;
-        minMaxGradient.mode = ParticleSystemGradientMode.RandomColor;;
+        var minMaxGradient = new ParticleSystem.MinMaxGradient(gradient);
+        minMaxGradient.mode = ParticleSystemGradientMode.RandomColor;
         main.startColor = minMaxGradient;
 
         line.colorGradient = gradient;

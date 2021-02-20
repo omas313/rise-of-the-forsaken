@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class PartyMember : BattleParticipant
 {
+    const string CAST_ANIMATION_BOOL_KEY = "IsCastingSpell";
+    const string HIT_ANIMATION_BOOL_KEY = "IsGettingHit";
+    const string ATTACK_ANIMATION_TRIGGER_KEY = "Attack";
+
     public override string Name => _name;
     public override CharacterStats CharacterStats => _stats;
     public override bool IsDead => _stats.CurrentHP <= 0;
@@ -23,12 +27,16 @@ public class PartyMember : BattleParticipant
     [SerializeField] int _speed;
     [SerializeField] int _startingHp;
     [SerializeField] PartyMemberStats _stats;
+    [SerializeField] Transform _spellCasePoint;
+    [SerializeField] ParticleSystem _castParticles;
     
     Enemy _selectedEnemyToAttack;
     MagicAttackDefinition _selectedMagicAttack;
     MagicAttackDefinition[] _magicAttacks;
     PartyMember _linkedPartyMember;
     PartyMember _selectedPartyMemberToLink;
+    Animator _animator;
+    Collider2D _collider;
     bool _requestedUnlink;
 
     public IEnumerator PreTurnAction(List<PartyMember> playerParty, List<Enemy> enemies)
@@ -36,6 +44,9 @@ public class PartyMember : BattleParticipant
         IncreaseMP();
         yield return null;
     }
+
+    public override void TurnOnCollider() => _collider.enabled = true;
+    public override void TurnOffCollider() => _collider.enabled = false;
 
     public override IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
@@ -47,16 +58,18 @@ public class PartyMember : BattleParticipant
         yield return new WaitUntil(() => _selectedEnemyToAttack != null || _selectedPartyMemberToLink != null || _requestedUnlink);
 
         if (_selectedEnemyToAttack != null)
-            yield return PerformAttack(_selectedEnemyToAttack);
+            yield return PerformAttack(enemies, _selectedEnemyToAttack);
         else if (_selectedPartyMemberToLink != null)
             yield return Link(_selectedPartyMemberToLink);
         else if (_requestedUnlink)
             yield return TryUnlink();
     }
 
-    public override IEnumerator ReceiveAttack(AttackDefinition attack)
+    public override IEnumerator ReceiveAttack(BattleAttack attack)
     {
         // do animations and other stuff
+
+        _animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
 
         if (HasLink)
         {
@@ -69,7 +82,11 @@ public class PartyMember : BattleParticipant
         else
             _stats.ReduceCurrentHP(attack.Damage);
 
-        yield return new WaitForSeconds(0.25f);
+        BattleEvents.InvokeDamageReceived(attack.Damage, transform.position);
+
+        yield return new WaitForSeconds(0.5f);
+
+        _animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
     }
 
     public override IEnumerator Die()
@@ -87,12 +104,42 @@ public class PartyMember : BattleParticipant
         return _stats.CurrentMP >= magicAttack.MPCost;
     }
 
-    IEnumerator PerformAttack(BattleParticipant attackReceiver)
+    IEnumerator PerformAttack(List<Enemy> enemies, BattleParticipant attackReceiver)
     {
         // do animations and other stuff
 
-        var attack = _selectedMagicAttack ??  attacks[UnityEngine.Random.Range(0, attacks.Length)];
+        var attackDefinition = _selectedMagicAttack ??  attacks[UnityEngine.Random.Range(0, attacks.Length)];
+        var attack = new BattleAttack(attackDefinition.Damage);
+
+        if (_selectedMagicAttack)
+        {
+            attackReceiver.TurnOnCollider();
+            _castParticles.Play();
+            _animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
+
+            // cast time can be added to magic attack def
+            yield return new WaitForSeconds(2f); 
+            // let magic SO do the casting and spawning
+            yield return SpawnParticles(attackReceiver);
+            
+            attackReceiver.TurnOffCollider();
+            _castParticles.Stop();
+            _animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
+        }
+        else
+        {
+            _animator.SetTrigger(ATTACK_ANIMATION_TRIGGER_KEY);
+            yield return new WaitForSeconds(0.2f); 
+            yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+        }
+    
+        // can let magic SO do the damage dealing
         yield return attackReceiver.ReceiveAttack(attack);
+
+        if (_selectedMagicAttack && _selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.AOE)
+            foreach (var enemy in enemies)
+                if (enemy != attackReceiver)
+                    StartCoroutine(enemy.ReceiveAttack(attack));
 
         if (_selectedMagicAttack)
             ConsumeMP(_selectedMagicAttack.MPCost);
@@ -100,8 +147,29 @@ public class PartyMember : BattleParticipant
         if (!_selectedMagicAttack)
             IncreaseMP();
 
-        Debug.Log($"{Name} {attack.Name} does {attack.Damage} damage to {attackReceiver.Name}");
+        // Debug.Log($"{Name} {attackDefinition.Name} does {attackDefinition.Damage} damage to {attackReceiver.Name}");
         yield return new WaitForSeconds(0.5f);    
+    }
+
+    IEnumerator SpawnParticles(BattleParticipant attackReceiver)
+    {
+        // needs to go in SO
+        if (_selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.Single)
+        {
+            var angle = Vector2.SignedAngle(Vector2.left, (attackReceiver.transform.position - transform.position).normalized);
+            var rotation = Quaternion.Euler(0f, 0f, angle);
+            var particles = Instantiate(_selectedMagicAttack.EffectPrefab, _spellCasePoint.position, rotation);
+            var particleSystemMain = particles.GetComponent<ParticleSystem>().main;
+            particleSystemMain.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * -angle);
+
+            var magicAttackHandler = particles.GetComponent<AttackParticleEventHandler>();
+            yield return new WaitUntil(() => magicAttackHandler.HasFinished || magicAttackHandler.HasMadeImpact);
+        }
+        else if (_selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.AOE)
+        {
+            var magicAttackHandler = Instantiate(_selectedMagicAttack.EffectPrefab).GetComponent<AttackParticleEventHandler>();
+            yield return new WaitUntil(() => magicAttackHandler.HasFinished || magicAttackHandler.HasMadeImpact);
+        }
     }
 
     void ConsumeMP(int amount)
@@ -202,11 +270,6 @@ public class PartyMember : BattleParticipant
         _magicAttacks = _magicAttacks.Concat(linkedAttacks).ToArray();
     }
 
-    void SetLinkedStats(PartyMember linkedMember)
-    {
-        
-    }
-
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
     {
         _selectedPartyMemberToLink = member1 == this ? member2 : member1;
@@ -223,6 +286,9 @@ public class PartyMember : BattleParticipant
 
     void Awake()
     {
+        _animator = GetComponent<Animator>();
+        _collider = GetComponent<Collider2D>();
+
         BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
         BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
         BattleEvents.PartyMembersLinked += OnPartyMembersLinked;

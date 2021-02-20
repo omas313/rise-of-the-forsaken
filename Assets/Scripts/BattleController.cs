@@ -15,7 +15,6 @@ public class BattleController : MonoBehaviour
 
     public PartyMember CurrentActivePartyMember { get; private set; }
 
-    [SerializeField] TextMeshProUGUI _battleText;
     [SerializeField] List<PartyMember> _playerParty;
     [SerializeField] List<Enemy> _enemies;
 
@@ -182,11 +181,11 @@ public class BattleController : MonoBehaviour
             stringBuilder.AppendLine($"{participant.Name}: {participant.CharacterStats.CurrentHP} {turn}");
         }
             
-        _battleText.SetText(stringBuilder.ToString());
+        // _battleText.SetText(stringBuilder.ToString());
     }
     void Update()
     {
-        SetBattleText();
+        // SetBattleText();
     }
 }
 

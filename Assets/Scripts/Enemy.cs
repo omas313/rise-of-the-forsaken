@@ -12,14 +12,19 @@ public class Enemy : BattleParticipant
 
     [SerializeField] float _chanceToAttackWeakest = 0.8f;
     [SerializeField] string _name;
-    [SerializeField] int _speed;
-    [SerializeField] int _startingHp;
     [SerializeField] CharacterStats _stats;
 
-    public override IEnumerator ReceiveAttack(AttackDefinition attack)
+    Collider2D _collider;
+
+    public override void TurnOnCollider() => _collider.enabled = true;
+    public override void TurnOffCollider() => _collider.enabled = false;
+
+    public override IEnumerator ReceiveAttack(BattleAttack attack)
     {
         // do animations and other stuff
-        yield return new WaitForSeconds(0.25f);
+        yield return null;
+        
+        BattleEvents.InvokeDamageReceived(attack.Damage, transform.position);
         _stats.ReduceCurrentHP(attack.Damage);
     }
 
@@ -51,7 +56,7 @@ public class Enemy : BattleParticipant
     {
         // do animations and other stuff
         var randomAttack = attacks[UnityEngine.Random.Range(0, attacks.Length)];
-        yield return attackReceiver.ReceiveAttack(randomAttack);
+        yield return attackReceiver.ReceiveAttack(new BattleAttack(randomAttack.Damage));
         Debug.Log($"{Name} {randomAttack.Name} does {randomAttack.Damage} damage to {attackReceiver.Name}");
         yield return new WaitForSeconds(0.25f);
     }
@@ -64,5 +69,9 @@ public class Enemy : BattleParticipant
         GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 
+    void Awake()
+    {
+        _collider = GetComponent<Collider2D>();
+    }
 }
 

@@ -14,6 +14,8 @@ public abstract class BattleParticipant : MonoBehaviour
 
     public abstract IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies);
     public abstract IEnumerator Die();
-    public abstract IEnumerator ReceiveAttack(AttackDefinition attack);
+    public abstract IEnumerator ReceiveAttack(BattleAttack attack);
+    public abstract void TurnOnCollider();
+    public abstract void TurnOffCollider();
 }
 

@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: IcicleShot
   m_EditorClassIdentifier: 
   _damage: 5
-  _name: IcicleShot
+  _name: Icicle Shot
   _mpCost: 2
   _elements:
   - {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}
+  _effectPrefab: {fileID: 3583543333487176100, guid: 94a2fbd59bad09245886fbbac153a24c, type: 3}
+  _magicAttackTargetType: 0
+  _areaEffectSpawnPosition: {x: 0, y: 0, z: 0}

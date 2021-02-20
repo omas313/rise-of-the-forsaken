@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8b0e81bd4060af47990529bf0ad52c0, type: 3}
-  m_Name: VolcanicDoom
+  m_Name: RockThrow
   m_EditorClassIdentifier: 
-  _damage: 10
-  _name: Volcanic Doom
-  _mpCost: 5
+  _damage: 5
+  _name: Rock Throw
+  _mpCost: 2
   _elements:
-  - {fileID: 11400000, guid: 6b8300678ee9cde48be51e5c441ad470, type: 2}
   - {fileID: 11400000, guid: 43d6b8147b6b95743b806fe063f19557, type: 2}
+  _effectPrefab: {fileID: 7690856000119618233, guid: 1554fac548fe1f04babe88899e313353, type: 3}
+  _magicAttackTargetType: 0
+  _areaEffectSpawnPosition: {x: 0, y: 0, z: 0}
