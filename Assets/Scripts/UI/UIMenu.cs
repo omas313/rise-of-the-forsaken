@@ -61,7 +61,7 @@ public class UIMenu : MonoBehaviour
             GoToPreviousItem();
         else if (Input.GetButtonDown("Down"))
             GoToNextItem();
-        else if (Input.GetButtonDown("Confirm") || Input.GetButtonDown("Right"))
+        else if (Input.GetButtonDown("Confirm"))
             ConfirmCurrentSelection();
     }
 

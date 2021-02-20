@@ -38,12 +38,12 @@ Transform:
 --- !u!198 &6799560046411150976
 ParticleSystem:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 5312248562505526583, guid: ede8c8423c53da143889a0d71a1ff18f, type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6799560046411150978}
   serializedVersion: 7
-  lengthInSec: 0.9
+  lengthInSec: 1.4
   simulationSpeed: 1
   stopAction: 3
   cullingMode: 0
@@ -118,7 +118,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.9
+      scalar: 1.4
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -171,7 +171,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -287,7 +287,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2247,7 +2247,7 @@ ParticleSystem:
     x:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -20
+      scalar: -10
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3671,7 +3671,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     type: 1
     collisionMode: 1
@@ -4843,7 +4843,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -582068631
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 5
   m_RenderMode: 0
   m_SortMode: 0
@@ -9717,7 +9717,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -582068631
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 3
   m_RenderMode: 0
   m_SortMode: 0
@@ -9753,7 +9753,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 49172304431451440, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
       propertyPath: m_SortingLayer
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 49172304431451440, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
       propertyPath: m_SortingLayerID
@@ -9806,6 +9806,26 @@ PrefabInstance:
     - target: {fileID: 5989977780627669724, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
       propertyPath: m_Name
       value: SplashParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742594795185452780, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
+      propertyPath: lengthInSec
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742594795185452780, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742594795185452780, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742594795185452780, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8742594795185452780, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd7c3633297c9a34ab79e3b0cb553236, type: 3}

@@ -91,11 +91,13 @@ public class Enemy : BattleParticipant
     
     public override IEnumerator Die()
     {
+        BattleEvents.InvokeParticipantIsDying(this);
         _animator.SetBool(DEATH_ANIMATION_BOOL_KEY, true);
         yield return new WaitForSeconds(0.25f); 
         _deathParticles.Play();
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f);
         GetComponentInChildren<SpriteRenderer>().enabled = false;
+        BattleEvents.InvokeParticipantIsDead(this);
     }
 
     void CopyStats()

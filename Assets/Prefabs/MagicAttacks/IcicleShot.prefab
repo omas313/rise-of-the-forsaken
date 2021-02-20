@@ -1032,7 +1032,7 @@ ParticleSystem:
       repeatInterval: 0.01
       probability: 1
   SizeModule:
-    enabled: 0
+    enabled: 1
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -1045,16 +1045,16 @@ ParticleSystem:
           time: 0
           value: 0
           inSlope: 0
-          outSlope: 1
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 1
+          time: 0.122161865
           value: 1
           inSlope: 1
-          outSlope: 0
+          outSlope: 1
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
@@ -4843,7 +4843,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -582068631
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_RenderMode: 0
   m_SortMode: 0
@@ -4891,7 +4891,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1463828847846039617, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: m_SortingLayer
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1463828847846039617, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: m_SortingLayerID
@@ -4971,11 +4971,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7903200257004837789, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
-      value: 15
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7903200257004837789, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minScalar
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7903200257004837789, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minMaxState
@@ -5090,7 +5090,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1463828847846039617, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: m_SortingLayer
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1463828847846039617, guid: 587e2492bbdb9a142ab57298bcada216, type: 3}
       propertyPath: m_SortingLayerID

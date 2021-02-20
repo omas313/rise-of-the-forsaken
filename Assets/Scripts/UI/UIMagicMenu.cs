@@ -64,9 +64,9 @@ public class UIMagicMenu : MonoBehaviour
             GoToPreviousItem();
         else if (Input.GetButtonDown("Down"))
             GoToNextItem();
-        else if (Input.GetButtonDown("Confirm") || Input.GetButtonDown("Right"))
+        else if (Input.GetButtonDown("Confirm"))
             ConfirmCurrentSelection();    
-        else if (Input.GetButtonDown("Back") || Input.GetButtonDown("Left"))
+        else if (Input.GetButtonDown("Back"))
             GoBack();
     }
 

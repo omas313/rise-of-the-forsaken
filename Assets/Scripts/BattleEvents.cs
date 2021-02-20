@@ -13,6 +13,8 @@ public static class BattleEvents
     public static event Action<PartyMember, PartyMember> PartyMembersUnlinked;
     public static event Action<PartyMember> PartyMemberIsCasting;
     public static event Action<PartyMember> PartyMemberFinishedCasting;
+    public static event Action<BattleParticipant> ParticipantIsDying;
+    public static event Action<BattleParticipant> ParticipantIsDead;
 
  
     public static void InvokeEnemyTargetSelected(Enemy enemy) => EnemyTargetSelected?.Invoke(enemy);
@@ -25,4 +27,6 @@ public static class BattleEvents
     public static void InvokePartyMembersUnlinked(PartyMember member1, PartyMember member2) => PartyMembersUnlinked?.Invoke(member1, member2);
     public static void InvokePartyMemberIsCasting(PartyMember member) => PartyMemberIsCasting?.Invoke(member);
     public static void InvokePartyMemberFinishedCasting(PartyMember member) => PartyMemberFinishedCasting?.Invoke(member);
+    public static void InvokeParticipantIsDying(BattleParticipant participant) => ParticipantIsDying?.Invoke(participant);
+    public static void InvokeParticipantIsDead(BattleParticipant participant) => ParticipantIsDead?.Invoke(participant);
 }

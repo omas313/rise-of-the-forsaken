@@ -7,6 +7,11 @@ public class WorldMapNode : MonoBehaviour
 {
     public bool HasBeenVisited { get; private set; }
 
+    public WorldMapNode PreviousNode => _previousNode;
+    public WorldMapNode NextNode => _nextNode;
+    public BattleDataDefinition BattleDefinition => _battleDataDefinition;
+
+
     [SerializeField] WorldMapNode _previousNode;
     [SerializeField] WorldMapNode _nextNode;
     [SerializeField] LineRenderer _line;

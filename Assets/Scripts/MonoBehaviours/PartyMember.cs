@@ -103,10 +103,12 @@ public class PartyMember : BattleParticipant
         if (HasLink)
             Debug.Log($"Error: {Name} dying with link to {_linkedPartyMember.Name}");
 
+        BattleEvents.InvokeParticipantIsDying(this);
         _animator.SetBool(DEATH_ANIMATION_BOOL_KEY, true);
         yield return new WaitForSeconds(0.25f); 
         _deathParticles.Play();
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.9f);
+        BattleEvents.InvokeParticipantIsDead(this);
     }
 
     public bool HasManaFor(MagicAttackDefinition magicAttack)
@@ -140,12 +142,12 @@ public class PartyMember : BattleParticipant
             // cast time can be added to magic attack def
             yield return new WaitForSeconds(2f); 
             // let magic SO do the casting and spawning
+            BattleEvents.InvokePartyMemberFinishedCasting(this);
             yield return SpawnParticles(attackReceiver);
             
             attackReceiver.TurnOffCollider();
             _castParticles.Stop();
             _animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
-            BattleEvents.InvokePartyMemberFinishedCasting(this);
 
             if (_selectedMagicAttack.Elements.Length > 1)
             {
