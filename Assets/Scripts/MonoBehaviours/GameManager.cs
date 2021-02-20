@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     void OnBattleSceneLoaded(AsyncOperation operation)
     {
         _battleController = FindObjectOfType<BattleController>();
-        _battleController.InitBattle(_currentBattleDataDefinition.PlayerParty, _currentBattleDataDefinition.Enemies);
+        _battleController.InitBattle(_currentBattleDataDefinition);
     }
 
     void Awake()

@@ -14,4 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerParty:
   - {fileID: 1856660274623694600, guid: 8dedbb1f295f2c040a66940e28a50675, type: 3}
-  _enemiesDefinitions: []
+  _enemiesDefinitions:
+  - {fileID: 11400000, guid: 32e6044e367e1704c9e116545f2f34e1, type: 2}
+  _acidRain: 0
+  _fog: 0
+  _particles: 1

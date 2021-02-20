@@ -16,41 +16,60 @@ public class BattleController : MonoBehaviour
     public PartyMember CurrentActivePartyMember { get; private set; }
 
     [SerializeField] bool _setParticipantsManually;
+    [SerializeField] BattleDataDefinition _battleDataDefinition;
 
     List<Enemy> _enemies;
     List<PartyMember> _playerParty;
-    List<BattleParticipant> _battleParticipants = new List<BattleParticipant>();
-    List<PartyMember> _activePlayerParty = new List<PartyMember>();
-    List<Enemy> _activeEnemies = new List<Enemy>();
+    List<BattleParticipant> _battleParticipants;
+    List<PartyMember> _activePlayerParty;
+    List<Enemy> _activeEnemies;
     BattleParticipant _currentParticipant;
     int _currentIndex;
     bool _hasBattleStarted;
 
-    public void InitBattle(List<PartyMember> playerParty, List<EnemyDefinition> enemiesDefinitions)
-    {
-        // create enemies
-
-        // StartBattle();
-    }
-
     public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
 
-    void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies) => StartCoroutine(TurnBasedBattle(playerParty, enemies));
+    public void InitBattle(BattleDataDefinition battleDataDefinition)
+    {
+        _battleDataDefinition = battleDataDefinition;
 
-    IEnumerator TurnBasedBattle(List<PartyMember> playerParty, List<Enemy> enemies)
+        FindObjectOfType<EnvironmentParticlesController>().SetEnvironmentParticles(battleDataDefinition);
+
+        _playerParty = new List<PartyMember>();
+        foreach (var prefab in battleDataDefinition.PlayerParty)
+        {
+            var partyMember = Instantiate(prefab, Vector3.zero, Quaternion.identity, GameObject.FindGameObjectWithTag("PlayerParty").transform);
+            _playerParty.Add(partyMember);
+        }
+
+        _enemies = new List<Enemy>();
+        foreach (var definition in battleDataDefinition.Enemies)
+        {
+            var enemy = Instantiate(definition.GameObjectprefab, Vector3.zero, Quaternion.identity, GameObject.FindGameObjectWithTag("Enemies").transform)
+                .GetComponent<Enemy>();
+            enemy.Initialize(definition);
+            _enemies.Add(enemy);
+        }
+        
+        StartBattle();
+    }
+
+
+    void StartBattle() => StartCoroutine(TurnBasedBattle());
+
+    IEnumerator TurnBasedBattle()
     {
         _hasBattleStarted = true;
 
         yield return new WaitForSeconds(0.25f); // for UI to sub to events
 
-        _playerParty = playerParty;
-        _enemies = enemies;
 
         _activePlayerParty = new List<PartyMember>(_playerParty);
         _activeEnemies = new List<Enemy>(_enemies);
 
         PlayerPartyUpdated?.Invoke(_playerParty, null);
         InitBattleParticipants(_playerParty, _enemies);
+
         BattleStarted?.Invoke(_playerParty, _enemies);
 
         _currentIndex = 0;
@@ -102,7 +121,7 @@ public class BattleController : MonoBehaviour
 
     void InitBattleParticipants(List<PartyMember> playerParty, List<Enemy> enemies)
     {
-        _battleParticipants.Clear();
+        _battleParticipants = new List<BattleParticipant>();
         
         foreach (var partyMember in _playerParty)
             _battleParticipants.Add(partyMember); 
@@ -207,10 +226,10 @@ public class BattleController : MonoBehaviour
 
     void Awake()
     {
-        if (_setParticipantsManually)
+        if (_setParticipantsManually && _battleDataDefinition != null)
         {
             GetParticipants();
-            StartBattle(_playerParty, _enemies);
+            InitBattle(_battleDataDefinition);
         }
     }
 

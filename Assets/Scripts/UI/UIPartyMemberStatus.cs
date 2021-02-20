@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class UIPartyMemberStatus : MonoBehaviour
 {
+    [SerializeField] UIPartyMemberStatusBar[] _bars;
+
+    [SerializeField] RectTransform _barsParent;
     Dictionary<PartyMember, UIPartyMemberStatusBar> _playerBars;
 
     void Start()
@@ -31,7 +34,7 @@ public class UIPartyMemberStatus : MonoBehaviour
     void OnPlayerPartyUpdated(List<PartyMember> party, PartyMember activeTurnPartyMember)
     {
         if (_playerBars == null)
-            InitDictionary(party);
+            Init(party);
 
         foreach (var pair in _playerBars)
         {
@@ -49,12 +52,22 @@ public class UIPartyMemberStatus : MonoBehaviour
 
     }
 
-    private void InitDictionary(List<PartyMember> party)
+    void Init(List<PartyMember> party)
     {
         _playerBars = new Dictionary<PartyMember, UIPartyMemberStatusBar>();
-        var bars = GetComponentsInChildren<UIPartyMemberStatusBar>();
 
         for (var i = 0; i < party.Count; i++)
-            _playerBars[party[i]] = bars[i];
+        {
+            _playerBars[party[i]] = _bars[i];
+            _bars[i].gameObject.SetActive(true);
+        }
+
+        
+
+        var height = 50f + party.Count * 45f;
+        _barsParent.sizeDelta = new Vector2(_barsParent.sizeDelta.x, height);
+
+        height += 10f;
+        GetComponent<RectTransform>().sizeDelta = new Vector2(_barsParent.sizeDelta.x, height);
     }
 }

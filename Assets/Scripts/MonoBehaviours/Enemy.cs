@@ -25,8 +25,10 @@ public class Enemy : BattleParticipant
     Collider2D _collider;
     private bool _isInitialized;
 
-    public void Initialize()
+    public void Initialize(EnemyDefinition definition)
     {
+        _definition = definition;
+
         CopyStats();
         GetComponentInChildren<SpriteRenderer>().sprite = _definition.Sprite;
         _name = _definition.name;
@@ -112,8 +114,8 @@ public class Enemy : BattleParticipant
 
     void Update()
     {
-        if (!_isInitialized)
-            Initialize();
+        if (!_isInitialized && _definition != null)
+            Initialize(_definition);
     }
 
     void Awake()

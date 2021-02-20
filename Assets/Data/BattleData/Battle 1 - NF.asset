@@ -15,4 +15,9 @@ MonoBehaviour:
   _playerParty:
   - {fileID: 1856660274623694600, guid: 8dedbb1f295f2c040a66940e28a50675, type: 3}
   - {fileID: 4097062291760535890, guid: 8178e20c0964c26429394b7e65601fff, type: 3}
-  _enemiesDefinitions: []
+  _enemiesDefinitions:
+  - {fileID: 11400000, guid: ff48b7b6e36ee8a4fb599f903e14e82c, type: 2}
+  - {fileID: 11400000, guid: 1c337429eb56a704fa6a548bc57b6524, type: 2}
+  _acidRain: 1
+  _fog: 0
+  _particles: 0

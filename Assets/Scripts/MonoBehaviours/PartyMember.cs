@@ -129,6 +129,7 @@ public class PartyMember : BattleParticipant
             attackReceiver.TurnOnCollider();
             _castParticles.Play();
             _animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
+            BattleEvents.InvokePartyMemberIsCasting(this);
 
             if (_selectedMagicAttack.Elements.Length > 1)
             {
@@ -144,6 +145,7 @@ public class PartyMember : BattleParticipant
             attackReceiver.TurnOffCollider();
             _castParticles.Stop();
             _animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
+            BattleEvents.InvokePartyMemberFinishedCasting(this);
 
             if (_selectedMagicAttack.Elements.Length > 1)
             {

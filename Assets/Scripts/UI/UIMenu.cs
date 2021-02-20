@@ -29,8 +29,15 @@ public class UIMenu : MonoBehaviour
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         Hide();
-        FindObjectOfType<BattleController>().PlayerPartyUpdated += OnPlayerPartyUpdated;
     }
+
+    void Start()
+    {
+        FindObjectOfType<BattleController>().PlayerPartyUpdated += OnPlayerPartyUpdated;    
+        BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
+    }
+
+    void OnEnemyTargetSelected(Enemy obj) => Hide();
 
     void Hide() => _canvasGroup.alpha = 0f;
     

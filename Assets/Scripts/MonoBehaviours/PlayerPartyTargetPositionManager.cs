@@ -50,7 +50,12 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
         _battleController.BattleStarted += OnBattleStarted;
         _battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
         _battleController.PartyMemberDied += OnPartyMemberDied;
+        
+        BattleEvents.PartyMemberIsCasting += OnPartyMemberCasting;
     }
+
+    void OnPartyMemberCasting(PartyMember obj) => HideMarker();
+
 
     void OnBattleStarted(List<PartyMember> playerParty, List<Enemy> enemies)
     {
@@ -76,7 +81,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
             PlaceMarkerAtMember(currentActiveMember);
     }
 
-    private void HideMarker()
+    void HideMarker()
     {
         _marker.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
