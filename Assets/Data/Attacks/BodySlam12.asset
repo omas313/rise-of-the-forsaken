@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0e0df9046841f14a9dcabd53eb95526, type: 3}
-  m_Name: Headbutt
+  m_Name: BodySlam12
   m_EditorClassIdentifier: 
-  _damage: 1
-  _name: Headbutt
+  _damage: 12
+  _name: Body Slam

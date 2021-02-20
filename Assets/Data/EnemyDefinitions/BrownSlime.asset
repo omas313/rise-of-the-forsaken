@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d056692fa95ac8b45905bb5e2ab9fc03, type: 3}
+  m_Name: BrownSlime
+  m_EditorClassIdentifier: 
+  _gameObjectprefab: {fileID: 2490071116830542128, guid: d4ef6deb3736e5a4e9a96e5582ed4609, type: 3}
+  _stats:
+    _currentHP: 8
+    _baseHP: 8
+    _currentMP: 0
+    _baseMP: 0
+    _currentSpeed: 5
+    _baseSpeed: 5
+  _attacks:
+  - {fileID: 11400000, guid: c04588c2244c0bf4fa89df59ec85bb99, type: 2}
+  _sprite: {fileID: 21300000, guid: 8ad9edd0a4bd2c94b8f81874c20d490b, type: 3}
+  _name: Brown Slime
+  _element: {fileID: 11400000, guid: 43d6b8147b6b95743b806fe063f19557, type: 2}

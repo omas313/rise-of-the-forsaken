@@ -4964,7 +4964,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 805a6eb6051d9394ab46d151351b3188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attacks: []
+  attacks:
+  - {fileID: 11400000, guid: a6e243af4ee39fa4db94df5526c6079c, type: 2}
   _magicAttacksStore: {fileID: 11400000, guid: 60f05a5f098e5a94897444698c4bf8b4, type: 2}
   _innateElement: {fileID: 0}
   _name: 

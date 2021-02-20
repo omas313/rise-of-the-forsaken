@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c94ea2b1e4f96b045889b11af02bc83c, type: 3}
+  m_Name: Battle 7 - NFTZ
+  m_EditorClassIdentifier: 
+  _playerParty:
+  - {fileID: 1856660274623694600, guid: 8dedbb1f295f2c040a66940e28a50675, type: 3}
+  - {fileID: 4097062291760535890, guid: 8178e20c0964c26429394b7e65601fff, type: 3}
+  - {fileID: 6854869630225952003, guid: 7efdcf349e469de43beb2d42cfff3126, type: 3}
+  - {fileID: 2574999421669237917, guid: c6f043f82f1ed2d40be9b87532a03657, type: 3}
+  _enemiesDefinitions: []

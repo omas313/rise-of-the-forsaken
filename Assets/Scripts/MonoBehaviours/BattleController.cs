@@ -15,28 +15,27 @@ public class BattleController : MonoBehaviour
 
     public PartyMember CurrentActivePartyMember { get; private set; }
 
-    [SerializeField] List<PartyMember> _playerParty;
-    [SerializeField] List<Enemy> _enemies;
+    [SerializeField] bool _setParticipantsManually;
 
+    List<Enemy> _enemies;
+    List<PartyMember> _playerParty;
+    List<BattleParticipant> _battleParticipants = new List<BattleParticipant>();
     List<PartyMember> _activePlayerParty = new List<PartyMember>();
     List<Enemy> _activeEnemies = new List<Enemy>();
-    List<BattleParticipant> _battleParticipants = new List<BattleParticipant>();
     BattleParticipant _currentParticipant;
     int _currentIndex;
     bool _hasBattleStarted;
 
-    public void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies) => StartCoroutine(TurnBasedBattle(playerParty, enemies));
+    public void InitBattle(List<PartyMember> playerParty, List<EnemyDefinition> enemiesDefinitions)
+    {
+        // create enemies
+
+        // StartBattle();
+    }
 
     public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
 
-    void Start()
-    {
-        // Gaemmanager will call these?
-        if (_enemies == null || _enemies.Count == 0)
-            _enemies = FindObjectsOfType<Enemy>().ToList();
-
-        StartBattle(_playerParty, _enemies);
-    }
+    void StartBattle(List<PartyMember> playerParty, List<Enemy> enemies) => StartCoroutine(TurnBasedBattle(playerParty, enemies));
 
     IEnumerator TurnBasedBattle(List<PartyMember> playerParty, List<Enemy> enemies)
     {
@@ -90,6 +89,12 @@ public class BattleController : MonoBehaviour
                 yield return BattleVictory();
                 break;
             }
+
+            if (AllPartyMembersAreDead())
+            {
+                yield return BattleLoss();
+                break;
+            }
         }
 
         Debug.Log("battle ended");
@@ -97,38 +102,15 @@ public class BattleController : MonoBehaviour
 
     void InitBattleParticipants(List<PartyMember> playerParty, List<Enemy> enemies)
     {
-        // todo: get player party from somewhere
-        // todo: who gives BattleManager the enemies? maybe battle data SO?
         _battleParticipants.Clear();
         
-        foreach (var partyMemeber in _playerParty)
-            _battleParticipants.Add(partyMemeber); 
+        foreach (var partyMember in _playerParty)
+            _battleParticipants.Add(partyMember); 
         
         foreach (var enemy in _enemies)
             _battleParticipants.Add(enemy); 
 
         _battleParticipants = _battleParticipants.OrderByDescending(bp => bp.CharacterStats.CurrentSpeed).ToList();
-    }
-
-    bool AllEnemiesAreDead()
-    {
-        foreach (var participant in _battleParticipants)
-            if (participant is Enemy)
-                return false;
-
-        return true;
-    }
-
-    IEnumerator BattleVictory()
-    {
-        while (true)
-        {
-            Debug.Log($"victory");
-            yield return null;
-
-            if (Input.GetKeyDown(KeyCode.Space))
-                break;
-        }
     }
 
     IEnumerator CheckDeadParticipants()
@@ -175,26 +157,66 @@ public class BattleController : MonoBehaviour
         }
     }
 
-    void SetBattleText()
-    {
-        if (_battleParticipants == null)
-            return;
+    bool AllEnemiesAreDead() => _activeEnemies.Count == 0;
+    // {
+    //     foreach (var participant in _battleParticipants)
+    //         if (participant is Enemy)
+    //             return false;
 
-        var stringBuilder = new StringBuilder();
-        foreach (var participant in _battleParticipants)
+    //     return true;
+    // }
+
+    bool AllPartyMembersAreDead() => _activePlayerParty.Count == 0;
+    // {
+    //     foreach (var participant in _battleParticipants)
+    //         if (participant is PartyMember)
+    //             return false;
+
+    //     return true;
+    // }
+
+    IEnumerator BattleVictory()
+    {
+        while (true)
         {
-            var turn = _currentParticipant == participant ? " [turn]" : "";
-            stringBuilder.AppendLine($"{participant.Name}: {participant.CharacterStats.CurrentHP} {turn}");
+            Debug.Log($"victory");
+            yield return null;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                break;
         }
-            
-        // _battleText.SetText(stringBuilder.ToString());
     }
+
+    IEnumerator BattleLoss()
+    {
+        while (true)
+        {
+            Debug.Log($"lost battle");
+            yield return null;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                break;
+        }
+    }
+
     void Update()
     {
         if (!_hasBattleStarted)
             Debug.Log("battle was not started");
+    }
 
-        // SetBattleText();
+    void Awake()
+    {
+        if (_setParticipantsManually)
+        {
+            GetParticipants();
+            StartBattle(_playerParty, _enemies);
+        }
+    }
+
+    void GetParticipants()
+    {
+        _enemies = FindObjectsOfType<Enemy>().ToList();
+        _playerParty = FindObjectsOfType<PartyMember>().ToList();
     }
 }
-

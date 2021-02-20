@@ -26,8 +26,8 @@ public class LinkBonusFloatingTextSpawner : MonoBehaviour
         var screenPosition1 = _camera.WorldToScreenPoint(member1.transform.position);
         var screenPosition2 = _camera.WorldToScreenPoint(member2.transform.position);
 
-        _texts[0].Play("unlinked", screenPosition1);
-        _texts[1].Play("unlinked", screenPosition2);
+        _texts[2].Play("unlinked", screenPosition1);
+        _texts[3].Play("unlinked", screenPosition2);
     }
 
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)

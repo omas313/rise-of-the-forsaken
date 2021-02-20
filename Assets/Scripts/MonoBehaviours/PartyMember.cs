@@ -9,6 +9,7 @@ public class PartyMember : BattleParticipant
     const string CAST_ANIMATION_BOOL_KEY = "IsCastingSpell";
     const string HIT_ANIMATION_BOOL_KEY = "IsGettingHit";
     const string DEATH_ANIMATION_BOOL_KEY = "IsDead";
+    const string IDLE_ANIMATION_TRIGGER_KEY = "Idle";
     const string ATTACK_ANIMATION_TRIGGER_KEY = "Attack";
 
     public override string Name => _name;
@@ -25,8 +26,6 @@ public class PartyMember : BattleParticipant
     [SerializeField] MagicAttacksStore _magicAttacksStore;
     [SerializeField] Element _innateElement;
     [SerializeField] string _name;
-    [SerializeField] int _speed;
-    [SerializeField] int _startingHp;
     [SerializeField] PartyMemberStats _stats;
     [SerializeField] Transform _spellCasePoint;
     [SerializeField] ParticleSystem _castParticles;
@@ -73,16 +72,13 @@ public class PartyMember : BattleParticipant
 
         _animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
 
-        if (_linkedPartyMember != null)
+        if (HasLink)
             _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
 
         if (HasLink)
         {
             _stats.ReduceLinkedHP(attack.Damage);
             _linkedPartyMember._stats.ReduceLinkedHP(attack.Damage);
-
-            if (IsLinkBroken)
-                yield return TryUnlink();
         }
         else
             _stats.ReduceCurrentHP(attack.Damage);
@@ -92,8 +88,14 @@ public class PartyMember : BattleParticipant
         yield return new WaitForSeconds(0.5f);
 
         _animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
-        if (_linkedPartyMember != null)
+
+        if (HasLink)
+        {
             _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
+
+            if (IsLinkBroken)
+                yield return TryUnlink();
+        }
     }
 
     public override IEnumerator Die()
@@ -204,11 +206,11 @@ public class PartyMember : BattleParticipant
         if (HasLink)
             yield return TryUnlink();
 
+        yield return new WaitForSeconds(0.5f);    
+
         HandleLink(partyMember);
         partyMember.HandleLink(this);
-
-        // Debug.Log($"{Name} linked to {partyMember.Name}");
-        yield return new WaitForSeconds(0.5f);    
+        BattleEvents.InvokePartyMembersLinked(this, partyMember);
     }
 
     IEnumerator TryUnlink()
@@ -217,23 +219,20 @@ public class PartyMember : BattleParticipant
         if (_linkedPartyMember == null)
             Debug.Log("Error: Requested to unlink but no linked member registered");
 
-        BattleEvents.InvokePartyMemberUnlinked(this, _linkedPartyMember);
-
+        BattleEvents.InvokePartyMembersUnlinked(this, _linkedPartyMember);
+        yield return new WaitForSeconds(0.15f);    
         yield return _linkedPartyMember.Unlink();
         yield return Unlink();
-
-        yield return new WaitForSeconds(0.5f);    
     }
 
     IEnumerator Unlink()
     {
-        Debug.Log($"{Name} unlinked from {_linkedPartyMember.Name}");
-
+        // Debug.Log($"{Name} unlinked from {_linkedPartyMember.Name}");
         // do animations and stuff
+        yield return new WaitForSeconds(0.15f);    
         _linkedPartyMember = null;
         SetMagicAttacks();
         UnsetLinkedStats();
-        yield return new WaitForSeconds(0.25f);
     }
 
 
@@ -296,12 +295,12 @@ public class PartyMember : BattleParticipant
         _magicAttacks = _magicAttacks.Concat(linkedAttacks).ToArray();
     }
 
-    void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
+    void OnRequestedPartyMembersLink(PartyMember member1, PartyMember member2)
     {
         _selectedPartyMemberToLink = member1 == this ? member2 : member1;
     }
 
-    void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)
+    void OnRequestedPartyMembersUnlink(PartyMember member1, PartyMember member2)
     {
         if (member1 == this)
             _requestedUnlink = true;
@@ -313,12 +312,21 @@ public class PartyMember : BattleParticipant
     void Awake()
     {
         _animator = GetComponent<Animator>();
+        StartCoroutine(StartAnimation(UnityEngine.Random.Range(0.15f, 1f)));
+
         _collider = GetComponent<Collider2D>();
 
         BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
         BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
-        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
-        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
+        BattleEvents.RequestedPartyMembersLink += OnRequestedPartyMembersLink;
+        BattleEvents.RequestedPartyMembersUnlink += OnRequestedPartyMembersUnlink;
+        
         SetMagicAttacks();
+    }
+
+    IEnumerator StartAnimation(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _animator.SetTrigger(IDLE_ANIMATION_TRIGGER_KEY);
     }
 }

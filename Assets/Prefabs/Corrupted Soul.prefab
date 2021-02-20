@@ -132,15 +132,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attacks:
   - {fileID: 11400000, guid: c04588c2244c0bf4fa89df59ec85bb99, type: 2}
+  _definition: {fileID: 0}
   _chanceToAttackWeakest: 0.8
   _name: Corrupted Soul
-  _stats:
-    _currentHP: 500
-    _baseHP: 500
-    _currentMP: 0
-    _baseMP: 0
-    _currentSpeed: 1
-    _baseSpeed: 1
   _deathParticles: {fileID: 5339920180087694399}
 --- !u!50 &3316514129038580408
 Rigidbody2D:

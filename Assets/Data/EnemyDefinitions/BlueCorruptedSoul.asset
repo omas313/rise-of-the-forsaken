@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d056692fa95ac8b45905bb5e2ab9fc03, type: 3}
+  m_Name: BlueCorruptedSoul
+  m_EditorClassIdentifier: 
+  _gameObjectprefab: {fileID: 4844895014715670675, guid: 7780708211f21f34d87576a1b4f47af3, type: 3}
+  _stats:
+    _currentHP: 14
+    _baseHP: 14
+    _currentMP: 0
+    _baseMP: 0
+    _currentSpeed: 8
+    _baseSpeed: 8
+  _attacks:
+  - {fileID: 11400000, guid: af49a8c5b560971458db3e1881455bf5, type: 2}
+  _sprite: {fileID: 21300000, guid: de25e0a8166c25a4280b2d847119c4ae, type: 3}
+  _name: Blue Corrupted Soul
+  _element: {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,18 +9,31 @@ public class Enemy : BattleParticipant
     const string HIT_ANIMATION_BOOL_KEY = "IsGettingHit";
     const string DEATH_ANIMATION_BOOL_KEY = "IsDead";
     const string ATTACK_ANIMATION_TRIGGER_KEY = "Attack";
+    const string IDLE_ANIMATION_TRIGGER_KEY = "Idle";
 
     public override string Name => _name;
     public override CharacterStats CharacterStats => _stats;
     public override bool IsDead => _stats.CurrentHP <= 0;
 
+    [SerializeField] EnemyDefinition _definition;
     [SerializeField] float _chanceToAttackWeakest = 0.8f;
     [SerializeField] string _name;
-    [SerializeField] CharacterStats _stats;
     [SerializeField] ParticleSystem _deathParticles;
 
+    CharacterStats _stats;
     Animator _animator;
     Collider2D _collider;
+    private bool _isInitialized;
+
+    public void Initialize()
+    {
+        CopyStats();
+        GetComponentInChildren<SpriteRenderer>().sprite = _definition.Sprite;
+        _name = _definition.name;
+        attacks = _definition.Attacks;
+
+        _isInitialized = true;
+    }
 
     public override void TurnOnCollider() => _collider.enabled = true;
     public override void TurnOffCollider() => _collider.enabled = false;
@@ -82,11 +96,32 @@ public class Enemy : BattleParticipant
         GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 
+    void CopyStats()
+    {
+        _stats = new CharacterStats();
+        _stats.SetCurrentHP(_definition.Stats.BaseHP);
+        _stats.SetCurrentSpeed(_definition.Stats.BaseSpeed);
+        _stats.SetCurrentMP(_definition.Stats.BaseMP);
+    }
+
+    IEnumerator StartAnimation(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _animator.SetTrigger(IDLE_ANIMATION_TRIGGER_KEY);
+    }
+
+    void Update()
+    {
+        if (!_isInitialized)
+            Initialize();
+    }
+
     void Awake()
     {
         _animator = GetComponent<Animator>();
+        StartCoroutine(StartAnimation(UnityEngine.Random.Range(0.15f, 1f)));
+        
         _collider = GetComponent<Collider2D>();
-
     }
 }
 

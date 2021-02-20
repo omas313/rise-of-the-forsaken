@@ -21,7 +21,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 
     public void InvokeUnlinkEvent()
     {
-        BattleEvents.InvokePartyMemberUnlinked(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
+        BattleEvents.InvokeRequestedPartyMembersUnlink(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
         MenuCursor.Instance.HideCursor();
         _isControllingCursor = false;
     }
@@ -147,7 +147,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
         if (_isLinking)
         {
             InvokeRemovalOfOtherLinks(selectedMember);
-            BattleEvents.InvokePartyMembersLinked(selectedMember, _battleController.CurrentActivePartyMember);
+            BattleEvents.InvokeRequestedPartyMembersLink(selectedMember, _battleController.CurrentActivePartyMember);
         }
         else
             BattleEvents.InvokePartyMemberSelected(selectedMember);
@@ -156,9 +156,9 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
     void InvokeRemovalOfOtherLinks(PartyMember selectedMember)
     {
         if (selectedMember.HasLink)
-            BattleEvents.InvokePartyMemberUnlinked(selectedMember, selectedMember.LinkedPartyMember);
+            BattleEvents.InvokeRequestedPartyMembersUnlink(selectedMember, selectedMember.LinkedPartyMember);
         if (_battleController.CurrentActivePartyMember.HasLink)
-            BattleEvents.InvokePartyMemberUnlinked(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
+            BattleEvents.InvokeRequestedPartyMembersUnlink(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
     }
 
     bool CantLinkTo(PartyMember selectedMember) => 
