@@ -39,8 +39,8 @@ public class LinkViewer : MonoBehaviour
         
         var directionVector = (member2.transform.position - member1.transform.position).normalized;
 
-        line.SetPosition(0, member1.transform.position + directionVector * 0.5f);
-        line.SetPosition(1, member2.transform.position - directionVector * 0.5f);
+        line.SetPosition(0, member1.transform.position + directionVector * 0.3f);
+        line.SetPosition(1, member2.transform.position - directionVector * 0.3f);
 
         var gradient = CreateGradient(member1.Element.Color, member2.Element.Color);
 

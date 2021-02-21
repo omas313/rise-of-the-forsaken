@@ -22,4 +22,5 @@ MonoBehaviour:
   _order: 5
   _acidRain: 0
   _fog: 1
+  _backFog: 1
   _particles: 0

@@ -10,14 +10,16 @@ public class BattleDataDefinition : ScriptableObject
     
     public bool AcidRain => _acidRain;
     public bool Fog => _fog;
+    public bool BackFog => _backFog;
     public bool Particles => _particles;
-    
-    
+
+
     [SerializeField] List<PartyMember> _playerParty;
     [SerializeField] List<EnemyDefinition> _enemiesDefinitions;
     [SerializeField] int _order;
 
     [SerializeField] bool _acidRain;
     [SerializeField] bool _fog;
+    [SerializeField] bool _backFog;
     [SerializeField] bool _particles;
 }

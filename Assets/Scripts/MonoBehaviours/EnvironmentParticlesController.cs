@@ -6,6 +6,7 @@ public class EnvironmentParticlesController : MonoBehaviour
 {
     [SerializeField] ParticleSystem _acidRain;
     [SerializeField] ParticleSystem _fog;
+    [SerializeField] ParticleSystem _backFog;
     [SerializeField] ParticleSystem _particles;
 
     public void SetEnvironmentParticles(BattleDataDefinition battleDataDefinition)
@@ -19,6 +20,11 @@ public class EnvironmentParticlesController : MonoBehaviour
             _fog.Play();
         else
             _fog.Stop();
+
+        if (battleDataDefinition.BackFog)
+            _backFog.Play();
+        else
+            _backFog.Stop();
 
         if (battleDataDefinition.Particles)
             _particles.Play();
