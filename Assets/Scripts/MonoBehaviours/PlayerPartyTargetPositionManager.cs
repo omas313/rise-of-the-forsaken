@@ -28,15 +28,14 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 
     public void StartChoosingLinkTarget()
     {
-        _isLinking = true;
-        _isControllingCursor = true;
-        _currentIndex = 0;
-        SetCurrentPosition();
+        StartCoroutine(StartSelectionInSeconds(0.1f));
     }
 
-    public void StartChoosingTarget()
+
+    IEnumerator StartSelectionInSeconds(float delay)
     {
-        _isLinking = false;
+        yield return new WaitForSeconds(delay);
+        _isLinking = true;
         _isControllingCursor = true;
         _currentIndex = 0;
         SetCurrentPosition();

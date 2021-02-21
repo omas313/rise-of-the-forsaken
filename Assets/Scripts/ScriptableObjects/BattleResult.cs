@@ -5,12 +5,16 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BattleResult.asset", menuName = "Battle Result")]
 public class BattleResult : ScriptableObject
 {
-    public BattleDataDefinition BattleDataDefinition { get; private set; }
-    public bool Won { get; private set; }
+    public BattleDataDefinition BattleDataDefinition => _battleDataDefinition;
+    public bool Won => _won;
+    
+    [SerializeField] BattleDataDefinition _battleDataDefinition;
+    [SerializeField] bool _won;
+
 
     public void SetResult(BattleDataDefinition definition, bool won)
     {
-        BattleDataDefinition = default;
-        Won = won;
+        _battleDataDefinition = default;
+        _won = won;
     }
 }

@@ -19,8 +19,14 @@ public class UIMagicMenu : MonoBehaviour
     public void StartMagicSelection()
     {
         Show();
-        _isActiveMenu = true;
         GoToPreviousItem();
+        StartCoroutine(ActivateMenuInSeconds(0.1f));
+    }
+
+    IEnumerator ActivateMenuInSeconds(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _isActiveMenu = true;
     }
 
     void Awake()

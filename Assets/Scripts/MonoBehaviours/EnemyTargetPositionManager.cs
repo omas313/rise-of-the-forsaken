@@ -15,12 +15,21 @@ public class EnemyTargetPositionManager : MonoBehaviour
     int _currentIndex;
     Camera _camera;
     bool _isControllingCursor;
+    bool _canSelect;
 
     public void StartChoosingTarget()
     {
-        _isControllingCursor = true;
+        StartCoroutine(StartSelectionInSeconds(0.1f));
+    }
+
+
+    IEnumerator StartSelectionInSeconds(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         _currentIndex = 0;
         SetCurrentPosition();
+        _isControllingCursor = true;
+        _canSelect = true;
     }
 
     void Start()
@@ -71,7 +80,7 @@ public class EnemyTargetPositionManager : MonoBehaviour
 
     void Update()
     {
-        if (!_isControllingCursor)    
+        if (!_isControllingCursor || !_canSelect)    
             return;
 
         if (Input.GetButtonDown("Up"))
@@ -111,6 +120,8 @@ public class EnemyTargetPositionManager : MonoBehaviour
         _isControllingCursor = false;
         var selectedEnemy = _enemyPositions[_activePositions[_currentIndex]];
         BattleEvents.InvokeEnemyTargetSelected(selectedEnemy);
+
+        _canSelect = true;
     }
 
     void SetCurrentPosition()

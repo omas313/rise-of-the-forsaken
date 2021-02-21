@@ -128,7 +128,10 @@ public class PlayerNode : MonoBehaviour
     void Start()
     {
         if (_startingNode != null && !_battleResult.Won)
+        {
             EnterIdleAtNode(_startingNode);    
+            return;
+        }
 
         var worldNode = FindObjectOfType<WorldMapNodes>().GetNodeForBattle(_battleResult.BattleDataDefinition);
         EnterIdleAtNode(worldNode);
