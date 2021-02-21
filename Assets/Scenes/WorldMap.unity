@@ -280,7 +280,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (6)
+      value: Node (7)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -365,7 +365,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (2)
+      value: Node (3)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -655,7 +655,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (4)
+      value: Node (5)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -772,7 +772,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (1)
+      value: Node (2)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -1302,7 +1302,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (3)
+      value: Node (4)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -1547,6 +1547,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1331224319}
+  - component: {fileID: 1331224320}
   m_Layer: 0
   m_Name: Nodes
   m_TagString: Untagged
@@ -1577,6 +1578,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1331224320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1331224318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0fe70a44eaca34bae987aa888bc9bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _nodes: []
 --- !u!1 &1386552800
 GameObject:
   m_ObjectHideFlags: 0
@@ -6533,6 +6547,7 @@ MonoBehaviour:
   _idleFor10SecondsEvent: {fileID: 11400000, guid: 6e7ae4e3dba3eb24e8d28fcb631f3a3e, type: 2}
   _moveSpeed: 1
   _startingNode: {fileID: 871015445}
+  _battleResult: {fileID: 11400000, guid: 3ea6e1b1673b5d649bb321e5c84833dd, type: 2}
 --- !u!1 &1489228933
 GameObject:
   m_ObjectHideFlags: 0
@@ -11559,7 +11574,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (5)
+      value: Node (6)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -11708,6 +11723,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainMenuBuildIndex: 0
   _worldMapBuildIndex: 1
+  _finalSceneBuildIndex: 3
+  _finalBattleNumber: 8
+  _battleResult: {fileID: 11400000, guid: 3ea6e1b1673b5d649bb321e5c84833dd, type: 2}
 --- !u!1 &1903942782
 GameObject:
   m_ObjectHideFlags: 0
@@ -11957,7 +11975,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (7)
+      value: Node (8)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder
@@ -12042,7 +12060,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 183017723544757013, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_Name
-      value: Node (0)
+      value: Node (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2388230215065275620, guid: a17296fbc57ee37498e1e3a332c3f390, type: 3}
       propertyPath: m_RootOrder

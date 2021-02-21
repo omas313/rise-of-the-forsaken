@@ -17,4 +17,12 @@ MonoBehaviour:
   - {fileID: 4097062291760535890, guid: 8178e20c0964c26429394b7e65601fff, type: 3}
   - {fileID: 6854869630225952003, guid: 7efdcf349e469de43beb2d42cfff3126, type: 3}
   - {fileID: 2574999421669237917, guid: c6f043f82f1ed2d40be9b87532a03657, type: 3}
-  _enemiesDefinitions: []
+  _enemiesDefinitions:
+  - {fileID: 11400000, guid: 5648bd6ba672b9a4e82e567f3797e498, type: 2}
+  - {fileID: 11400000, guid: 80fe25baf55d81d4e9062cdf0cbbd6b2, type: 2}
+  - {fileID: 11400000, guid: 1c337429eb56a704fa6a548bc57b6524, type: 2}
+  - {fileID: 11400000, guid: ac5f322c8153864498ab023bbcc2d586, type: 2}
+  _order: 7
+  _acidRain: 0
+  _fog: 1
+  _particles: 1

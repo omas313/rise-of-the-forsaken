@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f478539f5b9971444959ead3a2ce5e9d, type: 3}
+  m_Name: BattleDataStore
+  m_EditorClassIdentifier: 
+  _battleDataDefinitions:
+  - {fileID: 11400000, guid: 35e5cbcb3fbd7b64c98b8da802bc3610, type: 2}
+  - {fileID: 11400000, guid: d6037f9e9750c414b996af8a56791a0a, type: 2}
+  - {fileID: 11400000, guid: 216374396a19a91409d2ad80b1df708a, type: 2}
+  - {fileID: 11400000, guid: c1d233c00e47b1144ae408f9d6ce2802, type: 2}
+  - {fileID: 11400000, guid: dc085ed797a266540bbcfd691c61de2b, type: 2}
+  - {fileID: 11400000, guid: 80b9ab9f7de528942862d9ccf77104a3, type: 2}
+  - {fileID: 11400000, guid: 28058a83499c52241a47d72f2dcfc1bf, type: 2}
+  - {fileID: 11400000, guid: 447ae2c047b25de47a4f34939e095810, type: 2}

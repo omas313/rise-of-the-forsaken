@@ -15,6 +15,9 @@ public class BattleController : MonoBehaviour
 
     public PartyMember CurrentActivePartyMember { get; private set; }
 
+    [SerializeField] BattleConclusionPanel _victoryPanel;
+    [SerializeField] BattleConclusionPanel _defeatPanel;
+    [SerializeField] Animation _fadeInImage;
     [SerializeField] bool _setParticipantsManually;
     [SerializeField] BattleDataDefinition _battleDataDefinition;
 
@@ -26,6 +29,7 @@ public class BattleController : MonoBehaviour
     BattleParticipant _currentParticipant;
     int _currentIndex;
     bool _hasBattleStarted;
+    private bool _hasBattleEnded;
 
     public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
 
@@ -177,44 +181,37 @@ public class BattleController : MonoBehaviour
     }
 
     bool AllEnemiesAreDead() => _activeEnemies.Count == 0;
-    // {
-    //     foreach (var participant in _battleParticipants)
-    //         if (participant is Enemy)
-    //             return false;
-
-    //     return true;
-    // }
 
     bool AllPartyMembersAreDead() => _activePlayerParty.Count == 0;
-    // {
-    //     foreach (var participant in _battleParticipants)
-    //         if (participant is PartyMember)
-    //             return false;
-
-    //     return true;
-    // }
 
     IEnumerator BattleVictory()
     {
-        while (true)
+        if (!_hasBattleEnded)
         {
-            Debug.Log($"victory");
-            yield return null;
+            _hasBattleEnded = true;
+            yield return _victoryPanel.Play();
 
-            if (Input.GetKeyDown(KeyCode.Space))
-                break;
+            _fadeInImage.Play();
+            yield return new WaitForSeconds(0.2f); 
+            yield return new WaitUntil(() => !_fadeInImage.isPlaying);
+
+            GameManager.Instance.BattleComplete(_battleDataDefinition, won: true);
         }
     }
 
     IEnumerator BattleLoss()
     {
-        while (true)
+        if (!_hasBattleEnded)
         {
-            Debug.Log($"lost battle");
-            yield return null;
+            _hasBattleEnded = true;
 
-            if (Input.GetKeyDown(KeyCode.Space))
-                break;
+            yield return _defeatPanel.Play();
+
+            _fadeInImage.Play();
+            yield return new WaitForSeconds(0.2f); 
+            yield return new WaitUntil(() => !_fadeInImage.isPlaying);
+
+            GameManager.Instance.BattleComplete(_battleDataDefinition, won: false);
         }
     }
 
@@ -222,6 +219,11 @@ public class BattleController : MonoBehaviour
     {
         if (!_hasBattleStarted)
             Debug.Log("battle was not started");
+
+        if (Input.GetKeyDown(KeyCode.PageUp))
+            StartCoroutine(BattleVictory());
+        else if (Input.GetKeyDown(KeyCode.PageDown))
+            StartCoroutine(BattleVictory());
     }
 
     void Awake()

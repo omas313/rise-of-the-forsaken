@@ -18,9 +18,12 @@ public class UIMenuItem : MonoBehaviour
         MenuItemDefinition = menuItemDefinition;
         _labelText.SetText(menuItemDefinition.Label);
 
-        _mpCostGroup.SetActive(menuItemDefinition.HasMPCost);    
-        if (menuItemDefinition.HasMPCost)
-            _mpValue.SetText(menuItemDefinition.MPCost.ToString());
+        if (_mpCostGroup != null)
+        {
+            _mpCostGroup.SetActive(menuItemDefinition.HasMPCost);    
+            if (menuItemDefinition.HasMPCost)
+                _mpValue.SetText(menuItemDefinition.MPCost.ToString());
+        }
     }
 
     public void PerformAction()

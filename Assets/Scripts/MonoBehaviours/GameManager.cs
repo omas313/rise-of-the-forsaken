@@ -6,28 +6,40 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameState { MainMenu, Battle, WorldMap };
-
+    public enum GameState { MainMenu, Battle, WorldMap,
+        Final
+    }
     public static GameManager Instance { get; private set; }
     public GameState CurrentGameState { get; private set; }
 
-
     [SerializeField] int _mainMenuBuildIndex = 0;
     [SerializeField] int _worldMapBuildIndex = 1;
+    [SerializeField] int _finalSceneBuildIndex = 3;
+    [SerializeField] int _finalBattleNumber = 8;
+
+    [SerializeField] BattleResult _battleResult;
 
     BattleController _battleController;
     BattleDataDefinition _currentBattleDataDefinition;
+    private bool _wonLastBattle;
 
-    public void LoadWorldMap()
+    public void BattleComplete(BattleDataDefinition battleDataDefinition, bool won)
     {
-        var operation = SceneManager.LoadSceneAsync(_worldMapBuildIndex);
-        operation.completed += op => CurrentGameState = GameState.WorldMap;
-    }
 
-    public void LoadMainMenu()
-    {
-        var operation = SceneManager.LoadSceneAsync(_mainMenuBuildIndex);
-        operation.completed += op => CurrentGameState = GameState.MainMenu;
+        if (won && battleDataDefinition.Order == _finalBattleNumber)
+        {
+            PlayerPrefs.DeleteAll();
+            LoadFinalScene();
+            return;
+        }
+
+        if (won)
+        {
+            _battleResult.SetResult(battleDataDefinition, won);
+            PlayerPrefs.SetInt("MAIN_BATTLES_COMPLETED_COUNT", battleDataDefinition.Order);
+        }
+
+        LoadWorldMap();
     }
 
     public void LoadBattleScene(BattleDataDefinition battleDataDefinition)
@@ -45,6 +57,25 @@ public class GameManager : MonoBehaviour
         _battleController.InitBattle(_currentBattleDataDefinition);
     }
 
+    public void LoadWorldMap()
+    {
+        var operation = SceneManager.LoadSceneAsync(_worldMapBuildIndex);
+        operation.completed += op => CurrentGameState = GameState.WorldMap;
+    }
+
+    public void LoadMainMenu()
+    {
+        var operation = SceneManager.LoadSceneAsync(_mainMenuBuildIndex);
+        operation.completed += op => CurrentGameState = GameState.MainMenu;
+    }
+
+    void LoadFinalScene()
+    {
+        var operation = SceneManager.LoadSceneAsync(_finalSceneBuildIndex);
+        operation.completed += op => CurrentGameState = GameState.Final;
+    }
+
+
     void Awake()
     {
         if (Instance == null)
@@ -54,4 +85,5 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
     }
+
 }

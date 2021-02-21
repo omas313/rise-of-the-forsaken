@@ -15,8 +15,8 @@ public class LinkViewer : MonoBehaviour
     {
         _party = FindObjectsOfType<PartyMember>();        
         
-        BattleEvents.RequestedPartyMembersLink += OnPartyMembersLinked;
-        BattleEvents.RequestedPartyMembersUnlink += OnPartyMembersUnlinked;
+        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
     }
 
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)

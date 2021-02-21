@@ -17,6 +17,7 @@ public class PlayerNode : MonoBehaviour
 
     [SerializeField] float _moveSpeed = 1f;
     [SerializeField] WorldMapNode _startingNode;
+    [SerializeField] BattleResult _battleResult;
 
     WorldMapNode _currentNode;
     WorldMapNode _currentDestination;
@@ -126,9 +127,13 @@ public class PlayerNode : MonoBehaviour
 
     void Start()
     {
-        if (_startingNode != null)
+        if (_startingNode != null && !_battleResult.Won)
             EnterIdleAtNode(_startingNode);    
+
+        var worldNode = FindObjectOfType<WorldMapNodes>().GetNodeForBattle(_battleResult.BattleDataDefinition);
+        EnterIdleAtNode(worldNode);
     }
+
     void Awake()
     {
         _animator = GetComponent<Animator>();

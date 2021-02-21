@@ -173,6 +173,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
     void SetCurrentPosition()
     {
         var position = _activePositions[_currentIndex].position;
-        MenuCursor.Instance.PlaceAt(_camera.WorldToScreenPoint(position));
+        position = _camera.WorldToScreenPoint(position) - new Vector3(60f, 0f, 0f);
+        MenuCursor.Instance.PlaceAt(position);
     }
 }
