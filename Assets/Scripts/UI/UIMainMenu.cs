@@ -14,7 +14,7 @@ public class UIMainMenu : MonoBehaviour
 
     [SerializeField] BattleResult _battleResult;
     [SerializeField] BattleDataStore _battleDataStore;
-    
+
     List<UIMenuItem> _menuItems = new List<UIMenuItem>();
     CanvasGroup _canvasGroup;
 
@@ -23,16 +23,19 @@ public class UIMainMenu : MonoBehaviour
 
     public void OnStartGameConfirmed()
     {
-        Debug.Log("start");
-        
+        _battleResult.Clear();
         // StartCoroutine(ShowStory());
+        StartCoroutine(StartGame());
     }
 
     public void OnLoadGameConfirmed()
     {
+        _battleResult.SetResult(
+            _battleDataStore.GetBattle(PlayerPrefs.GetInt("MAIN_BATTLES_COMPLETED_COUNT")),
+            won: true
+        );
 
-        // StartCoroutine(StartGame());
-        Debug.Log("load");
+        StartCoroutine(StartGame());
     }
 
     public void OnMainMenuAnimationFinished()
@@ -84,6 +87,8 @@ public class UIMainMenu : MonoBehaviour
         _startGameItem.gameObject.SetActive(true);
         _startGameItem.Init(_startGameItemDefinition);
         _menuItems.Add(_startGameItem);
+
+        // Debug.Log(PlayerPrefs.GetInt("MAIN_BATTLES_COMPLETED_COUNT"));
 
         if (HasSaveGame())
         {

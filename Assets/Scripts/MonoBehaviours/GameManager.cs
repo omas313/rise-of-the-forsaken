@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] int _mainMenuBuildIndex = 0;
     [SerializeField] int _worldMapBuildIndex = 1;
-    [SerializeField] int _finalSceneBuildIndex = 3;
-    [SerializeField] int _finalBattleNumber = 8;
+    [SerializeField] int _finalSceneBuildIndex = 2;
+    [SerializeField] BattleDataStore _battleDataStore;
 
     [SerializeField] BattleResult _battleResult;
 
@@ -25,10 +25,12 @@ public class GameManager : MonoBehaviour
 
     public void BattleComplete(BattleDataDefinition battleDataDefinition, bool won)
     {
+        Debug.Log($"GM battle completed with {battleDataDefinition}");
 
-        if (won && battleDataDefinition.Order == _finalBattleNumber)
+        if (HasWonFinalBattle(battleDataDefinition, won))
         {
             PlayerPrefs.DeleteAll();
+            _battleResult.Clear();
             LoadFinalScene();
             return;
         }
@@ -38,9 +40,13 @@ public class GameManager : MonoBehaviour
             _battleResult.SetResult(battleDataDefinition, won);
             PlayerPrefs.SetInt("MAIN_BATTLES_COMPLETED_COUNT", battleDataDefinition.Order);
         }
+        else
+            _battleResult.Lost();
 
         LoadWorldMap();
     }
+
+    bool HasWonFinalBattle(BattleDataDefinition battleDataDefinition, bool won) => won && battleDataDefinition == _battleDataStore.FinalBattleDefinition;
 
     public void LoadBattleScene(BattleDataDefinition battleDataDefinition)
     {

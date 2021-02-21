@@ -17,8 +17,15 @@ public class LinkViewer : MonoBehaviour
         
         BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
         BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
+          FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
     }
 
+    private void OnBattleEnded()
+    {
+        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
+        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
+    }
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
     {
         CreateLinkLine(member1, member2);

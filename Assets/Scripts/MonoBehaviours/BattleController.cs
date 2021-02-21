@@ -12,6 +12,7 @@ public class BattleController : MonoBehaviour
     public event Action<List<PartyMember>, PartyMember> PlayerPartyUpdated;
     public event Action<Enemy> EnemyDied;
     public event Action<PartyMember> PartyMemberDied;
+    public event Action BattleEnded;
 
     public PartyMember CurrentActivePartyMember { get; private set; }
 
@@ -188,6 +189,7 @@ public class BattleController : MonoBehaviour
     {
         if (!_hasBattleEnded)
         {
+            BattleEnded?.Invoke();
             _hasBattleEnded = true;
             yield return _victoryPanel.Play();
 
@@ -203,6 +205,8 @@ public class BattleController : MonoBehaviour
     {
         if (!_hasBattleEnded)
         {
+            BattleEnded?.Invoke();
+
             _hasBattleEnded = true;
 
             yield return _defeatPanel.Play();
@@ -223,7 +227,7 @@ public class BattleController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.PageUp))
             StartCoroutine(BattleVictory());
         else if (Input.GetKeyDown(KeyCode.PageDown))
-            StartCoroutine(BattleVictory());
+            StartCoroutine(BattleLoss());
     }
 
     void Awake()

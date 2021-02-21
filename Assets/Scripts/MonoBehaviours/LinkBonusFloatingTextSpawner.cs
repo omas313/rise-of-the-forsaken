@@ -15,6 +15,14 @@ public class LinkBonusFloatingTextSpawner : MonoBehaviour
         _texts = GetComponentsInChildren<FloatingText>();
         BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
         BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
+        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
+    }
+
+    private void OnBattleEnded()
+    {
+        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
+        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
     }
 
     private void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)

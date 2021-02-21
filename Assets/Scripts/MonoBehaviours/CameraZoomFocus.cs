@@ -21,8 +21,18 @@ public class CameraZoomFocus : MonoBehaviour
 
         BattleEvents.ParticipantIsDying += OnParticipantDying;
         BattleEvents.ParticipantIsDead += OnParticipantDead;
+        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
     }
 
+    private void OnBattleEnded()
+    {
+        BattleEvents.PartyMemberIsCasting -= OnPartyCasting;
+        BattleEvents.PartyMemberFinishedCasting -= OnPartyMemberFinishedCasting;
+
+        BattleEvents.ParticipantIsDying -= OnParticipantDying;
+        BattleEvents.ParticipantIsDead -= OnParticipantDead;
+        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
+    }
 
     void OnParticipantDying(BattleParticipant participant)
     {

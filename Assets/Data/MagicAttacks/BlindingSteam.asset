@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8b0e81bd4060af47990529bf0ad52c0, type: 3}
   m_Name: BlindingSteam
   m_EditorClassIdentifier: 
-  _damage: 7
+  _damage: 8
   _name: Blinding Steam
   _mpCost: 7
   _elements:

@@ -14,9 +14,20 @@ public class UIPartyMemberStatus : MonoBehaviour
     {
         var battleController = FindObjectOfType<BattleController>();
         battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
+        battleController.BattleEnded += OnBattleEnded;
 
         BattleEvents.RequestedPartyMembersLink += OnPartyMembersLinked;
         BattleEvents.RequestedPartyMembersUnlink += OnPartyMembersUnlinked;
+    }
+
+    private void OnBattleEnded()
+    {
+        var battleController = FindObjectOfType<BattleController>();
+        battleController.PlayerPartyUpdated -= OnPlayerPartyUpdated;
+        battleController.BattleEnded -= OnBattleEnded;
+
+        BattleEvents.RequestedPartyMembersLink -= OnPartyMembersLinked;
+        BattleEvents.RequestedPartyMembersUnlink -= OnPartyMembersUnlinked;
     }
 
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)

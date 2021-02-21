@@ -324,9 +324,26 @@ public class PartyMember : BattleParticipant
         BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
         BattleEvents.RequestedPartyMembersLink += OnRequestedPartyMembersLink;
         BattleEvents.RequestedPartyMembersUnlink += OnRequestedPartyMembersUnlink;
+
+        BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
+        BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
+        BattleEvents.RequestedPartyMembersLink += OnRequestedPartyMembersLink;
+        BattleEvents.RequestedPartyMembersUnlink += OnRequestedPartyMembersUnlink;
         
+        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
         SetMagicAttacks();
     }
+
+    private void OnBattleEnded()
+
+    {
+        BattleEvents.EnemyTargetSelected -= OnEnemyTargetSelected;
+        BattleEvents.MagicAttackSelected -= OnMagicAttackSelected;
+        BattleEvents.RequestedPartyMembersLink -= OnRequestedPartyMembersLink;
+        BattleEvents.RequestedPartyMembersUnlink -= OnRequestedPartyMembersUnlink;
+        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
+    }
+
 
     IEnumerator StartAnimation(float delay)
     {

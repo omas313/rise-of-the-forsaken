@@ -51,6 +51,17 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
         _battleController.PartyMemberDied += OnPartyMemberDied;
         
         BattleEvents.PartyMemberIsCasting += OnPartyMemberCasting;
+        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
+    }
+
+    private void OnBattleEnded()
+    {
+        _battleController.BattleStarted -= OnBattleStarted;
+        _battleController.PlayerPartyUpdated -= OnPlayerPartyUpdated;
+        _battleController.PartyMemberDied -= OnPartyMemberDied;
+        
+        BattleEvents.PartyMemberIsCasting -= OnPartyMemberCasting;
+        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
     }
 
     void OnPartyMemberCasting(PartyMember obj) => HideMarker();
@@ -82,13 +93,23 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
 
     void HideMarker()
     {
-        _marker.GetComponentInChildren<SpriteRenderer>().enabled = false;
+        if (_marker != null)
+        {
+            var sr = _marker.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+                sr.enabled = false;
+        }
     }
 
     void PlaceMarkerAtMember(PartyMember currentActiveMember)
     {
-        _marker.GetComponentInChildren<SpriteRenderer>().enabled = true;
-        _marker.transform.position = currentActiveMember.transform.position;
+        if (_marker != null)
+        {
+            var sr = _marker.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+                sr.enabled = true;
+            _marker.transform.position = currentActiveMember.transform.position;
+        }
     }
 
     void OnPartyMemberDied(PartyMember partyMember)

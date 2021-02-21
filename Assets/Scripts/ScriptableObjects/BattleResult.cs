@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,15 @@ public class BattleResult : ScriptableObject
 
     public void SetResult(BattleDataDefinition definition, bool won)
     {
-        _battleDataDefinition = default;
+        _battleDataDefinition = definition;
         _won = won;
+    }
+
+    public void Lost() => _won = false;
+
+    public void Clear()
+    {
+        _battleDataDefinition = null;
+        _won = false;
     }
 }
