@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameObjectprefab: {fileID: 4844895014715670675, guid: 7780708211f21f34d87576a1b4f47af3, type: 3}
   _stats:
-    _currentHP: 14
-    _baseHP: 14
+    _currentHP: 16
+    _baseHP: 16
     _currentMP: 0
     _baseMP: 0
-    _currentSpeed: 8
-    _baseSpeed: 8
+    _currentSpeed: 2
+    _baseSpeed: 2
   _attacks:
-  - {fileID: 11400000, guid: af49a8c5b560971458db3e1881455bf5, type: 2}
+  - {fileID: 11400000, guid: a5c3155c39b60474c9e96ce49d7b3751, type: 2}
   _sprite: {fileID: 21300000, guid: c545b6c1a05381548a722a5110ea98cd, type: 3}
   _name: Brown Corrupted Soul
   _element: {fileID: 11400000, guid: 43d6b8147b6b95743b806fe063f19557, type: 2}

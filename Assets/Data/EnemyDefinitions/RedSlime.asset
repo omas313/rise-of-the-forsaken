@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameObjectprefab: {fileID: 2490071116830542128, guid: d4ef6deb3736e5a4e9a96e5582ed4609, type: 3}
   _stats:
-    _currentHP: 8
-    _baseHP: 8
+    _currentHP: 10
+    _baseHP: 10
     _currentMP: 0
     _baseMP: 0
     _currentSpeed: 5

@@ -21,7 +21,7 @@ MonoBehaviour:
     _currentSpeed: 5
     _baseSpeed: 5
   _attacks:
-  - {fileID: 11400000, guid: c04588c2244c0bf4fa89df59ec85bb99, type: 2}
+  - {fileID: 11400000, guid: ddc2ff6420679df499eecfe19df9fdeb, type: 2}
   _sprite: {fileID: 21300000, guid: 8ad9edd0a4bd2c94b8f81874c20d490b, type: 3}
   _name: Brown Slime
   _element: {fileID: 11400000, guid: 43d6b8147b6b95743b806fe063f19557, type: 2}

@@ -120,7 +120,7 @@ public class PlayerNode : MonoBehaviour
         _fadeInAnimation.Play(); // here for now.....
         yield return new WaitForSeconds(1f);
 
-        Debug.Log($"weorld map calling GM load battle with current node {_currentNode}, def: {_currentNode.BattleDefinition}");
+        // Debug.Log($"weorld map calling GM load battle with current node {_currentNode}, def: {_currentNode.BattleDefinition}");
         GameManager.Instance.LoadBattleScene(_currentNode.BattleDefinition);
     }
 

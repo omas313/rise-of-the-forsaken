@@ -23,3 +23,5 @@ MonoBehaviour:
   _fog: 0
   _backFog: 1
   _particles: 0
+  _preturnDialogue: 1
+  _lines: {fileID: 11400000, guid: 156b0acee4293ac44ac429295124df3e, type: 2}

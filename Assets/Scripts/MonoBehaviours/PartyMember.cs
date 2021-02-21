@@ -40,10 +40,24 @@ public class PartyMember : BattleParticipant
     Collider2D _collider;
     bool _requestedUnlink;
 
+
+    // here for now
+    static bool _playedFirstTurnDialogue;
+
     public IEnumerator PreTurnAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
         IncreaseMP();
         yield return null;
+
+        // here for now
+        if (GameManager.Instance.CurrentBattleData.HasPreturnDialogue && !_playedFirstTurnDialogue)
+        {
+            _playedFirstTurnDialogue = true;
+
+            var textPlayer = FindObjectOfType<ChronologicalLinesPlayer>();
+            textPlayer.Init(GameManager.Instance.CurrentBattleData.TextLines);
+            yield return textPlayer.LinePlayer();
+        }
     }
 
     public override void TurnOnCollider() => _collider.enabled = true;
@@ -273,7 +287,7 @@ public class PartyMember : BattleParticipant
     void SetLinkedStats()
     {
         _stats.SetLinkedHP((int)((_stats.CurrentHP + _linkedPartyMember._stats.CurrentHP) * 1.25f));
-        _stats.SetLinkedMP(Mathf.Max(2, (int)((_stats.CurrentMP + _linkedPartyMember._stats.CurrentMP) * 1.25f)));
+        _stats.SetLinkedMP(Mathf.Max(2, _stats.CurrentMP + _linkedPartyMember._stats.CurrentMP));
     }
     
     void UnsetLinkedStats()
@@ -332,6 +346,16 @@ public class PartyMember : BattleParticipant
         
         FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
         SetMagicAttacks();
+        SetStartingStats();
+
+        _playedFirstTurnDialogue = false;
+
+    }
+
+    void SetStartingStats()
+    {
+        _stats.SetCurrentHP(_stats.BaseHP);
+        _stats.SetCurrentMP(1);
     }
 
     private void OnBattleEnded()

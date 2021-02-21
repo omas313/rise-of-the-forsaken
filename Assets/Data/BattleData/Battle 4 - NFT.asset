@@ -22,4 +22,7 @@ MonoBehaviour:
   _order: 4
   _acidRain: 0
   _fog: 1
+  _backFog: 0
   _particles: 1
+  _preturnDialogue: 1
+  _lines: {fileID: 11400000, guid: b88a76a9da10c2341aa3345e35fa8e7a, type: 2}

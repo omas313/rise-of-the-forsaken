@@ -12,6 +12,9 @@ public class BattleDataDefinition : ScriptableObject
     public bool Fog => _fog;
     public bool BackFog => _backFog;
     public bool Particles => _particles;
+    
+    public bool HasPreturnDialogue => _preturnDialogue;
+    public ChronologicalTextLines TextLines => _lines;
 
 
     [SerializeField] List<PartyMember> _playerParty;
@@ -22,4 +25,7 @@ public class BattleDataDefinition : ScriptableObject
     [SerializeField] bool _fog;
     [SerializeField] bool _backFog;
     [SerializeField] bool _particles;
+
+    [SerializeField] bool _preturnDialogue;
+    [SerializeField] ChronologicalTextLines _lines;
 }

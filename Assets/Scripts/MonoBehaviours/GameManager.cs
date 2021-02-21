@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     }
     public static GameManager Instance { get; private set; }
     public GameState CurrentGameState { get; private set; }
+    public BattleDataDefinition CurrentBattleData => _currentBattleDataDefinition;
 
     [SerializeField] int _mainMenuBuildIndex = 0;
     [SerializeField] int _worldMapBuildIndex = 1;
@@ -21,11 +22,18 @@ public class GameManager : MonoBehaviour
 
     BattleController _battleController;
     BattleDataDefinition _currentBattleDataDefinition;
-    private bool _wonLastBattle;
+    bool _wonLastBattle;
+
+
+    public void SetCurrentBattleData(BattleController battleController, BattleDataDefinition battleDataDefinition)
+    {
+        _battleController = battleController;
+        _currentBattleDataDefinition = battleDataDefinition;
+    }
 
     public void BattleComplete(BattleDataDefinition battleDataDefinition, bool won)
     {
-        Debug.Log($"GM battle completed with {battleDataDefinition}");
+        // Debug.Log($"GM battle completed with {battleDataDefinition}");
 
         if (HasWonFinalBattle(battleDataDefinition, won))
         {

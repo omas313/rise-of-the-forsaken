@@ -11,6 +11,7 @@ public class UIMainMenu : MonoBehaviour
     [SerializeField] UIMenuItem _loadGameItem;
     [SerializeField] MenuItemDefinition _startGameItemDefinition;
     [SerializeField] MenuItemDefinition _loadGameItemDefinition;
+    [SerializeField] GameEvent _uiMainMenuStart;
 
     [SerializeField] BattleResult _battleResult;
     [SerializeField] BattleDataStore _battleDataStore;
@@ -21,11 +22,17 @@ public class UIMainMenu : MonoBehaviour
     int _currentItemIndex;
     bool _hasRequestedStart;
 
-    public void OnStartGameConfirmed()
+    bool _isActivated;
+
+    // new game
+    public void StartGame()
     {
         _battleResult.Clear();
-        // StartCoroutine(ShowStory());
-        StartCoroutine(StartGame());
+        _uiMainMenuStart.Raise();
+        ClearPPInt();
+        _isActivated = false;
+
+        StartCoroutine(StartGameAfterAnimations());
     }
 
     public void OnLoadGameConfirmed()
@@ -35,17 +42,23 @@ public class UIMainMenu : MonoBehaviour
             won: true
         );
 
-        StartCoroutine(StartGame());
+        StartCoroutine(StartGameAfterAnimations());
     }
 
     public void OnMainMenuAnimationFinished()
     {
+        _isActivated = true;
         GoToPreviousItem();
     }
 
     void Update()
     {
-        if (_hasRequestedStart)
+        if (Input.GetKeyDown(KeyCode.PageUp))
+            StartGame();
+        else if (Input.GetKeyDown(KeyCode.PageDown))
+            OnLoadGameConfirmed();
+
+        if (_hasRequestedStart || !_isActivated)
             return;
 
         if (Input.GetButtonDown("Up"))
@@ -74,7 +87,7 @@ public class UIMainMenu : MonoBehaviour
         _menuItems[_currentItemIndex].PerformAction();
     }
 
-    IEnumerator StartGame()
+    IEnumerator StartGameAfterAnimations()
     {
         _fadeInImageAnimation.Play();
         yield return new WaitForSeconds(0.2f);

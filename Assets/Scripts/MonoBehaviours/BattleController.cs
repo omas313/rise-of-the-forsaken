@@ -81,7 +81,7 @@ public class BattleController : MonoBehaviour
 
         while (true)
         {
-            Debug.Log("battle loop");
+            // Debug.Log("battle loop");
 
             _currentParticipant = _battleParticipants[_currentIndex];
 
@@ -234,6 +234,7 @@ public class BattleController : MonoBehaviour
     {
         if (_setParticipantsManually && _battleDataDefinition != null)
         {
+            GameManager.Instance.SetCurrentBattleData(this, _battleDataDefinition);
             GetParticipants();
             InitBattle(_battleDataDefinition);
         }

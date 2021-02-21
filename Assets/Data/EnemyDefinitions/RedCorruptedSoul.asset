@@ -21,7 +21,7 @@ MonoBehaviour:
     _currentSpeed: 8
     _baseSpeed: 8
   _attacks:
-  - {fileID: 11400000, guid: af49a8c5b560971458db3e1881455bf5, type: 2}
+  - {fileID: 11400000, guid: ddc2ff6420679df499eecfe19df9fdeb, type: 2}
   _sprite: {fileID: 21300000, guid: d17b3424ea36fd347b2144c00a8aa748, type: 3}
   _name: Red Corrupted Soul
   _element: {fileID: 11400000, guid: 6b8300678ee9cde48be51e5c441ad470, type: 2}

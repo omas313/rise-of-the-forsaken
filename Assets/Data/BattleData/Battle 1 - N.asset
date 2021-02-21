@@ -19,4 +19,7 @@ MonoBehaviour:
   _order: 1
   _acidRain: 0
   _fog: 0
+  _backFog: 0
   _particles: 1
+  _preturnDialogue: 1
+  _lines: {fileID: 11400000, guid: 774b94770b326e448880b756c6b25754, type: 2}

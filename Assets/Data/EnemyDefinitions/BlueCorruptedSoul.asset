@@ -18,10 +18,10 @@ MonoBehaviour:
     _baseHP: 14
     _currentMP: 0
     _baseMP: 0
-    _currentSpeed: 8
-    _baseSpeed: 8
+    _currentSpeed: 6
+    _baseSpeed: 6
   _attacks:
-  - {fileID: 11400000, guid: af49a8c5b560971458db3e1881455bf5, type: 2}
+  - {fileID: 11400000, guid: ddc2ff6420679df499eecfe19df9fdeb, type: 2}
   _sprite: {fileID: 21300000, guid: de25e0a8166c25a4280b2d847119c4ae, type: 3}
   _name: Blue Corrupted Soul
   _element: {fileID: 11400000, guid: 0a7354470758a7e4d9ca940cc3e8a893, type: 2}

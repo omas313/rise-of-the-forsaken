@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: _stats._currentMP
-      value: 12
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8145436193821895936, guid: f28beca5f1720d143af276ec6caf1206, type: 3}
       propertyPath: attacks.Array.size
