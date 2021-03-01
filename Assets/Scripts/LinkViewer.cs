@@ -11,26 +11,6 @@ public class LinkViewer : MonoBehaviour
     PartyMember[] _party;
     List<LinkLine> _linkLines = new List<LinkLine>();
 
-    void Start()
-    {
-        _party = FindObjectsOfType<PartyMember>();        
-        
-        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
-        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
-          FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
-    }
-
-    private void OnBattleEnded()
-    {
-        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
-        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
-        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
-    }
-    void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
-    {
-        CreateLinkLine(member1, member2);
-    }
-
     void CreateLinkLine(PartyMember member1, PartyMember member2)
     {
         var midPoint = member1.transform.position + (member2.transform.position - member1.transform.position) * 0.5f;
@@ -75,6 +55,8 @@ public class LinkViewer : MonoBehaviour
         return gradient;
     }
 
+    void OnPartyMembersLinked(PartyMember member1, PartyMember member2) => CreateLinkLine(member1, member2);
+
     void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)
     {
         var linkLine = _linkLines.Where(ll => ll.Members.Contains(member1) && ll.Members.Contains(member2)).FirstOrDefault();
@@ -86,4 +68,17 @@ public class LinkViewer : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
+    }
+
+    void Start()
+    {
+        _party = FindObjectsOfType<PartyMember>();        
+        
+        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
+    }
 }

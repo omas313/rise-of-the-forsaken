@@ -10,20 +10,6 @@ public class DamageDisplayer : MonoBehaviour
 
     FloatingText[] _texts;
 
-    void Awake()
-    {
-        _texts = GetComponentsInChildren<FloatingText>();
-
-        BattleEvents.DamageReceived += OnDamageReceived;        
-        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
-    }
-
-    private void OnBattleEnded()
-    {
-        BattleEvents.DamageReceived -= OnDamageReceived;        
-        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
-    }
-
     void OnDamageReceived(int damage, Vector3 position)
     {
         var text = GetInactiveText();
@@ -43,4 +29,15 @@ public class DamageDisplayer : MonoBehaviour
         return newText;
     }
 
+    void OnDestroy()
+    {
+        BattleEvents.DamageReceived -= OnDamageReceived;        
+    }
+
+    void Awake()
+    {
+        _texts = GetComponentsInChildren<FloatingText>();
+
+        BattleEvents.DamageReceived += OnDamageReceived;        
+    }
 }

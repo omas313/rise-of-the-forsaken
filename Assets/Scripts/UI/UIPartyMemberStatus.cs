@@ -6,48 +6,28 @@ using UnityEngine;
 public class UIPartyMemberStatus : MonoBehaviour
 {
     [SerializeField] UIPartyMemberStatusBar[] _bars;
-
     [SerializeField] RectTransform _barsParent;
-    Dictionary<PartyMember, UIPartyMemberStatusBar> _playerBars;
 
-    void Start()
-    {
-        var battleController = FindObjectOfType<BattleController>();
-        battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
-        battleController.BattleEnded += OnBattleEnded;
-
-        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
-        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
-    }
-
-    private void OnBattleEnded()
-    {
-        var battleController = FindObjectOfType<BattleController>();
-        battleController.PlayerPartyUpdated -= OnPlayerPartyUpdated;
-        battleController.BattleEnded -= OnBattleEnded;
-
-        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
-        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
-    }
+    Dictionary<PartyMember, UIPartyMemberStatusBar> _partyMembersBars;
 
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
     {
-        _playerBars[member1].SetLinkedStatus(member1.Element.Color, member2.Element.Color);
-        _playerBars[member2].SetLinkedStatus(member1.Element.Color, member2.Element.Color);
+        _partyMembersBars[member1].SetLinkedStatus(member1.Element.Color, member2.Element.Color);
+        _partyMembersBars[member2].SetLinkedStatus(member1.Element.Color, member2.Element.Color);
     }
 
     void OnPartyMembersUnlinked(PartyMember member1, PartyMember member2)
     {
-        _playerBars[member1].HideLinkedStatus();
-        _playerBars[member2].HideLinkedStatus();
+        _partyMembersBars[member1].HideLinkedStatus();
+        _partyMembersBars[member2].HideLinkedStatus();
     }
 
     void OnPlayerPartyUpdated(List<PartyMember> party, PartyMember activeTurnPartyMember)
     {
-        if (_playerBars == null)
+        if (_partyMembersBars == null)
             Init(party);
 
-        foreach (var pair in _playerBars)
+        foreach (var pair in _partyMembersBars)
         {
             var partyMember = pair.Key;
             var bar = pair.Value;
@@ -65,11 +45,11 @@ public class UIPartyMemberStatus : MonoBehaviour
 
     void Init(List<PartyMember> party)
     {
-        _playerBars = new Dictionary<PartyMember, UIPartyMemberStatusBar>();
+        _partyMembersBars = new Dictionary<PartyMember, UIPartyMemberStatusBar>();
 
         for (var i = 0; i < party.Count; i++)
         {
-            _playerBars[party[i]] = _bars[i];
+            _partyMembersBars[party[i]] = _bars[i];
             _bars[i].gameObject.SetActive(true);
         }
         
@@ -79,5 +59,18 @@ public class UIPartyMemberStatus : MonoBehaviour
 
         height += 10f;
         GetComponent<RectTransform>().sizeDelta = new Vector2(_barsParent.sizeDelta.x, height);
+    }
+    void OnDestroy()
+    {
+        BattleEvents.PlayerPartyUpdated -= OnPlayerPartyUpdated;
+        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
+    }
+
+    void Start()
+    {
+        BattleEvents.PlayerPartyUpdated += OnPlayerPartyUpdated;
+        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
     }
 }

@@ -1,10 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class UIMagicMenu : MonoBehaviour
 {
+    // todo: consider using UIEvents class for all UI events so we acn pass parameters
     [SerializeField] GameEvent _uiMenuMagicSelected;
     [SerializeField] UIMagicAttackItem _magicAttackItemPrefab;
     [SerializeField] Transform _itemsParent;
@@ -13,7 +13,7 @@ public class UIMagicMenu : MonoBehaviour
     List<UIMagicAttackItem> _menuItems = new List<UIMagicAttackItem>();
     BattleController _battleController;
     CanvasGroup _canvasGroup;
-    bool _isActiveMenu;
+    bool _isActive;
     int _currentItemIndex;
 
     public void StartMagicSelection()
@@ -26,32 +26,18 @@ public class UIMagicMenu : MonoBehaviour
     IEnumerator ActivateMenuInSeconds(float delay)
     {
         yield return new WaitForSeconds(delay);
-        _isActiveMenu = true;
-    }
-
-    void Awake()
-    {
-        _canvasGroup = GetComponent<CanvasGroup>();
-        Hide();    
-    }
-
-    void Start()
-    {
-        _battleController = FindObjectOfType<BattleController>();
-        _battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
+        _isActive = true;
     }
 
     void Hide() => _canvasGroup.alpha = 0f;
     void Show() => _canvasGroup.alpha = 1f;
 
-    private void OnPlayerPartyUpdated(List<PartyMember> partyMembers, PartyMember currentActiveMember)
+    void OnPlayerPartyUpdated(List<PartyMember> partyMembers, PartyMember currentActiveMember)
     {
         if (currentActiveMember == null)
             return;
 
-        foreach (var oldItems in _itemsParent.GetComponentsInChildren<UIMagicAttackItem>())
-            Destroy(oldItems.gameObject);
-        _menuItems.Clear();
+        ClearOldItems();
 
         foreach (var magicAttack in currentActiveMember.MagicAttacks)
         {
@@ -61,19 +47,11 @@ public class UIMagicMenu : MonoBehaviour
         }
     }
 
-    void Update()
+    void ClearOldItems()
     {
-        if (!_isActiveMenu)
-            return;
-
-        if (Input.GetButtonDown("Up"))
-            GoToPreviousItem();
-        else if (Input.GetButtonDown("Down"))
-            GoToNextItem();
-        else if (Input.GetButtonDown("Confirm"))
-            ConfirmCurrentSelection();    
-        else if (Input.GetButtonDown("Back"))
-            GoBack();
+        foreach (var oldItems in _itemsParent.GetComponentsInChildren<UIMagicAttackItem>())
+            Destroy(oldItems.gameObject);
+        _menuItems.Clear();
     }
 
     void GoBack()
@@ -81,7 +59,7 @@ public class UIMagicMenu : MonoBehaviour
         if (_backEvent != null)
             _backEvent.Raise();
 
-        _isActiveMenu = false;
+        _isActive = false;
         Hide();
     }
 
@@ -101,6 +79,7 @@ public class UIMagicMenu : MonoBehaviour
     {
         var magicAttack = _menuItems[_currentItemIndex].MagicAttackDefinition;
 
+        // todo: let the item be selectable according to this on init of the item
         if (!_battleController.CurrentActivePartyMember.HasManaFor(magicAttack))
             return;
 
@@ -108,7 +87,39 @@ public class UIMagicMenu : MonoBehaviour
             _uiMenuMagicSelected.Raise();
             
         BattleEvents.InvokeMagicAttackSelected(magicAttack);
-        _isActiveMenu = false;
+        _isActive = false;
         Hide();
+    }
+
+    void Update()
+    {
+        if (!_isActive)
+            return;
+
+        if (Input.GetButtonDown("Up"))
+            GoToPreviousItem();
+        else if (Input.GetButtonDown("Down"))
+            GoToNextItem();
+        else if (Input.GetButtonDown("Confirm"))
+            ConfirmCurrentSelection();    
+        else if (Input.GetButtonDown("Back"))
+            GoBack();
+    }
+    
+    void OnDestroy()
+    {
+        BattleEvents.PlayerPartyUpdated -= OnPlayerPartyUpdated;
+    }
+
+    void Start()
+    {
+        _battleController = FindObjectOfType<BattleController>();
+        BattleEvents.PlayerPartyUpdated += OnPlayerPartyUpdated;
+    }
+
+    void Awake()
+    {
+        _canvasGroup = GetComponent<CanvasGroup>();
+        Hide();    
     }
 }

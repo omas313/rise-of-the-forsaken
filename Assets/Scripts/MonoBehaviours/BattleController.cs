@@ -8,17 +8,14 @@ using System.Collections;
 
 public class BattleController : MonoBehaviour
 {
-    public event Action<List<PartyMember>, List<Enemy>> BattleStarted;
-    public event Action<List<PartyMember>, PartyMember> PlayerPartyUpdated;
-    public event Action<Enemy> EnemyDied;
-    public event Action<PartyMember> PartyMemberDied;
-    public event Action BattleEnded;
-
     public PartyMember CurrentActivePartyMember { get; private set; }
 
+    // move this ui stuff out to battle ui handler
     [SerializeField] BattleConclusionPanel _victoryPanel;
     [SerializeField] BattleConclusionPanel _defeatPanel;
     [SerializeField] Animation _fadeInImage;
+
+    // For debugging
     [SerializeField] bool _setParticipantsManually;
     [SerializeField] BattleDataDefinition _battleDataDefinition;
 
@@ -30,7 +27,7 @@ public class BattleController : MonoBehaviour
     BattleParticipant _currentParticipant;
     int _currentIndex;
     bool _hasBattleStarted;
-    private bool _hasBattleEnded;
+    bool _hasBattleEnded;
 
     public bool IsCurrentActivePartyMember(PartyMember member) => CurrentActivePartyMember == member;
 
@@ -72,17 +69,19 @@ public class BattleController : MonoBehaviour
         _activePlayerParty = new List<PartyMember>(_playerParty);
         _activeEnemies = new List<Enemy>(_enemies);
 
-        PlayerPartyUpdated?.Invoke(_playerParty, null);
+        BattleEvents.InvokePlayerPartyUpdated(_playerParty, null);
         InitBattleParticipants(_playerParty, _enemies);
 
-        BattleStarted?.Invoke(_playerParty, _enemies);
+        BattleEvents.InvokeBattleStarted(_playerParty, _enemies);
 
         _currentIndex = 0;
 
+        // move out to ui
         var battleIntroAnimation = GameObject.FindWithTag("BattleIntro").GetComponent<Animation>();
         yield return new WaitUntil(() => !battleIntroAnimation.isPlaying);
         yield return new WaitForSeconds(0.5f);
 
+        // move to ui
         if (_battleDataDefinition.HasPreturnDialogue)
             yield return PlayPreBattleDialogue();
 
@@ -97,7 +96,7 @@ public class BattleController : MonoBehaviour
                 var partyMember = _currentParticipant as PartyMember;
                 CurrentActivePartyMember = partyMember;   
                 yield return partyMember.PreTurnAction(_activePlayerParty, _activeEnemies);
-                PlayerPartyUpdated?.Invoke(_playerParty, partyMember);
+                BattleEvents.InvokePlayerPartyUpdated(_playerParty, partyMember);
             }
             else
                 CurrentActivePartyMember = null;   
@@ -107,13 +106,13 @@ public class BattleController : MonoBehaviour
             yield return new WaitForSeconds(0.25f);
 
              if (_currentParticipant is PartyMember)
-                PlayerPartyUpdated?.Invoke(_playerParty, null);
+                BattleEvents.InvokePlayerPartyUpdated(_playerParty, null);
 
             _currentIndex = (_currentIndex + 1) % _battleParticipants.Count;
 
             yield return CheckDeadParticipants();
 
-            PlayerPartyUpdated?.Invoke(_playerParty, null);
+            BattleEvents.InvokePlayerPartyUpdated(_playerParty, null);
             
             if (AllEnemiesAreDead())
             {
@@ -184,13 +183,13 @@ public class BattleController : MonoBehaviour
             {
                 var enemy = deadParticipant as Enemy;
                 _activeEnemies.Remove(enemy);
-                EnemyDied?.Invoke(enemy);
+                BattleEvents.InvokeEnemyDied(enemy);
             }
             else
             {
                 var partyMember = deadParticipant as PartyMember;
                 _activePlayerParty.Remove(partyMember);
-                PartyMemberDied?.Invoke(partyMember);
+                BattleEvents.InvokePartyMemberDied(partyMember);
             }
         }
     }
@@ -203,7 +202,7 @@ public class BattleController : MonoBehaviour
     {
         if (!_hasBattleEnded)
         {
-            BattleEnded?.Invoke();
+            BattleEvents.InvokeBattleEnded();
             _hasBattleEnded = true;
             yield return _victoryPanel.Play();
 
@@ -219,7 +218,7 @@ public class BattleController : MonoBehaviour
     {
         if (!_hasBattleEnded)
         {
-            BattleEnded?.Invoke();
+            BattleEvents.InvokeBattleEnded();
 
             _hasBattleEnded = true;
 
@@ -249,14 +248,9 @@ public class BattleController : MonoBehaviour
         if (_setParticipantsManually && _battleDataDefinition != null)
         {
             GameManager.Instance.SetCurrentBattleData(this, _battleDataDefinition);
-            GetParticipants();
+            _enemies = FindObjectsOfType<Enemy>().ToList();
+            _playerParty = FindObjectsOfType<PartyMember>().ToList();
             InitBattle(_battleDataDefinition);
         }
-    }
-
-    void GetParticipants()
-    {
-        _enemies = FindObjectsOfType<Enemy>().ToList();
-        _playerParty = FindObjectsOfType<PartyMember>().ToList();
     }
 }

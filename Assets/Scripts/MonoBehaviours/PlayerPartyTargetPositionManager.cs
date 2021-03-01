@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +13,16 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
     List<Transform> _activePositions;
 
     Camera _camera;
-    BattleController _battleController;
+    PartyMember _currentActivePartyMember;
     int _currentIndex;
-    bool _isControllingCursor;
+    bool _isActive;
     bool _isLinking;
 
     public void InvokeUnlinkEvent()
     {
-        BattleEvents.InvokeRequestedPartyMembersUnlink(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
+        BattleEvents.InvokeRequestedPartyMembersUnlink(_currentActivePartyMember, _currentActivePartyMember.LinkedPartyMember);
         MenuCursor.Instance.HideCursor();
-        _isControllingCursor = false;
+        _isActive = false;
     }
 
     public void StartChoosingLinkTarget()
@@ -31,112 +30,28 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
         StartCoroutine(StartSelectionInSeconds(0.1f));
     }
 
-
     IEnumerator StartSelectionInSeconds(float delay)
     {
         yield return new WaitForSeconds(delay);
         _isLinking = true;
-        _isControllingCursor = true;
+        _isActive = true;
         _currentIndex = 0;
         SetCurrentPosition();
     }
 
-    void Start()
-    {
-        _camera = Camera.main;
-
-        _battleController = FindObjectOfType<BattleController>();
-        _battleController.BattleStarted += OnBattleStarted;
-        _battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
-        _battleController.PartyMemberDied += OnPartyMemberDied;
-        
-        BattleEvents.PartyMemberIsCasting += OnPartyMemberCasting;
-        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
-    }
-
-    private void OnBattleEnded()
-    {
-        _battleController.BattleStarted -= OnBattleStarted;
-        _battleController.PlayerPartyUpdated -= OnPlayerPartyUpdated;
-        _battleController.PartyMemberDied -= OnPartyMemberDied;
-        
-        BattleEvents.PartyMemberIsCasting -= OnPartyMemberCasting;
-        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
-    }
-
-    void OnPartyMemberCasting(PartyMember obj) => HideMarker();
-
-
-    void OnBattleStarted(List<PartyMember> playerParty, List<Enemy> enemies)
-    {
-        _memberPositions = new Dictionary<Transform, PartyMember>();
-        _activePositions = new List<Transform>();
-
-        for (var i = 0; i < playerParty.Count; i++)
-        {
-            var position = _positions[i];
-            _memberPositions[position] = playerParty[i];
-            _activePositions.Add(position);
-            playerParty[i].transform.position = _activePositions[i].position;
-        }
-
-        _activePositions = _activePositions.OrderBy(p => p.name).ToList();
-    }
-
-    void OnPlayerPartyUpdated(List<PartyMember> playerParty, PartyMember currentActiveMember)
-    {
-        if (currentActiveMember == null)
-            HideMarker();
-        else
-            PlaceMarkerAtMember(currentActiveMember);
-    }
-
     void HideMarker()
     {
-        if (_marker != null)
-        {
-            var sr = _marker.GetComponentInChildren<SpriteRenderer>();
-            if (sr != null)
-                sr.enabled = false;
-        }
+        var sr = _marker.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+            sr.enabled = false;
     }
 
     void PlaceMarkerAtMember(PartyMember currentActiveMember)
     {
-        if (_marker != null)
-        {
-            var sr = _marker.GetComponentInChildren<SpriteRenderer>();
-            if (sr != null)
-                sr.enabled = true;
-            _marker.transform.position = currentActiveMember.transform.position;
-        }
-    }
-
-    void OnPartyMemberDied(PartyMember partyMember)
-    {
-        Transform positionToRemove = null;
-
-        foreach (var pair in _memberPositions)
-            if (pair.Value == partyMember)
-                positionToRemove = pair.Key;
-        
-        _activePositions.Remove(positionToRemove);
-        _memberPositions.Remove(positionToRemove);
-    }
-
-    void Update()
-    {
-        if (!_isControllingCursor)    
-            return;
-
-        if (Input.GetButtonDown("Up"))
-            GoToPreviousPosition();
-        else if (Input.GetButtonDown("Down"))
-            GoToNextPosition();
-        else if (Input.GetButtonDown("Confirm"))
-            ConfirmCurrentSelection();    
-        else if (Input.GetButtonDown("Back"))
-            GoBack();
+        var sr = _marker.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+            sr.enabled = true;
+        _marker.transform.position = currentActiveMember.transform.position;
     }
 
     void GoBack()
@@ -145,7 +60,7 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
             _backEvent.Raise();
 
         MenuCursor.Instance.HideCursor();
-        _isControllingCursor = false;
+        _isActive = false;
     }
 
     void GoToPreviousPosition()
@@ -167,12 +82,12 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
             return;
 
         MenuCursor.Instance.HideCursor();
-        _isControllingCursor = false;
+        _isActive = false;
 
         if (_isLinking)
         {
             InvokeRemovalOfOtherLinks(selectedMember);
-            BattleEvents.InvokeRequestedPartyMembersLink(selectedMember, _battleController.CurrentActivePartyMember);
+            BattleEvents.InvokeRequestedPartyMembersLink(selectedMember, _currentActivePartyMember);
         }
         else
             BattleEvents.InvokePartyMemberSelected(selectedMember);
@@ -182,18 +97,90 @@ public class PlayerPartyTargetPositionManager : MonoBehaviour
     {
         if (selectedMember.HasLink)
             BattleEvents.InvokeRequestedPartyMembersUnlink(selectedMember, selectedMember.LinkedPartyMember);
-        if (_battleController.CurrentActivePartyMember.HasLink)
-            BattleEvents.InvokeRequestedPartyMembersUnlink(_battleController.CurrentActivePartyMember, _battleController.CurrentActivePartyMember.LinkedPartyMember);
+        if (_currentActivePartyMember.HasLink)
+            BattleEvents.InvokeRequestedPartyMembersUnlink(_currentActivePartyMember, _currentActivePartyMember.LinkedPartyMember);
     }
 
-    bool CantLinkTo(PartyMember selectedMember) => 
-        _battleController.IsCurrentActivePartyMember(selectedMember)
-        || (selectedMember.HasLink && _battleController.IsCurrentActivePartyMember(selectedMember.LinkedPartyMember));
+    bool CantLinkTo(PartyMember selectedMember) => _currentActivePartyMember == selectedMember || IsAlreadyLinkedTo(selectedMember);
+    bool IsAlreadyLinkedTo(PartyMember selectedMember) => selectedMember.HasLink && selectedMember.LinkedPartyMember == _currentActivePartyMember;
 
     void SetCurrentPosition()
     {
         var position = _activePositions[_currentIndex].position;
         position = _camera.WorldToScreenPoint(position) - new Vector3(60f, 0f, 0f);
         MenuCursor.Instance.PlaceAt(position);
+    }
+
+    void OnPartyMemberDied(PartyMember partyMember)
+    {
+        Transform positionToRemove = null;
+
+        foreach (var pair in _memberPositions)
+            if (pair.Value == partyMember)
+                positionToRemove = pair.Key;
+        
+        _activePositions.Remove(positionToRemove);
+        _memberPositions.Remove(positionToRemove);
+    }
+        
+    void OnPartyMemberCasting(PartyMember partyMember) => HideMarker();
+
+    void OnBattleStarted(List<PartyMember> playerParty, List<Enemy> enemies)
+    {
+        _memberPositions = new Dictionary<Transform, PartyMember>();
+        _activePositions = new List<Transform>();
+
+        for (var i = 0; i < playerParty.Count; i++)
+        {
+            var position = _positions[i];
+            _memberPositions[position] = playerParty[i];
+            _activePositions.Add(position);
+            playerParty[i].transform.position = _activePositions[i].position;
+        }
+
+        _activePositions = _activePositions.OrderBy(p => p.name).ToList();
+    }
+
+    void OnPlayerPartyUpdated(List<PartyMember> playerParty, PartyMember currentActiveMember)
+    {
+        _currentActivePartyMember = currentActiveMember;
+        
+        if (currentActiveMember == null)
+            HideMarker();
+        else
+            PlaceMarkerAtMember(currentActiveMember);
+    }
+
+    void Update()
+    {
+        if (!_isActive)    
+            return;
+
+        if (Input.GetButtonDown("Up"))
+            GoToPreviousPosition();
+        else if (Input.GetButtonDown("Down"))
+            GoToNextPosition();
+        else if (Input.GetButtonDown("Confirm"))
+            ConfirmCurrentSelection();    
+        else if (Input.GetButtonDown("Back"))
+            GoBack();
+    }
+
+    private void OnDestroy()
+    {
+        BattleEvents.BattleStarted -= OnBattleStarted;
+        BattleEvents.PlayerPartyUpdated -= OnPlayerPartyUpdated;
+        BattleEvents.PartyMemberDied -= OnPartyMemberDied;
+        BattleEvents.PartyMemberIsCasting -= OnPartyMemberCasting;
+    }
+
+    void Start()
+    {
+        _camera = Camera.main;
+        
+        BattleEvents.BattleStarted += OnBattleStarted;
+        BattleEvents.PlayerPartyUpdated += OnPlayerPartyUpdated;
+        BattleEvents.PartyMemberDied += OnPartyMemberDied;
+        BattleEvents.PartyMemberIsCasting += OnPartyMemberCasting;
     }
 }

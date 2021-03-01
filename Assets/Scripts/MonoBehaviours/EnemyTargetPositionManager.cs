@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +21,6 @@ public class EnemyTargetPositionManager : MonoBehaviour
         StartCoroutine(StartSelectionInSeconds(0.1f));
     }
 
-
     IEnumerator StartSelectionInSeconds(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -30,15 +28,6 @@ public class EnemyTargetPositionManager : MonoBehaviour
         SetCurrentPosition();
         _isControllingCursor = true;
         _canSelect = true;
-    }
-
-    void Start()
-    {
-        _camera = Camera.main;
-
-        var battleController = FindObjectOfType<BattleController>();
-        battleController.BattleStarted += OnBattleStarted;
-        battleController.EnemyDied += OnEnemyDied;
     }
 
     void OnBattleStarted(List<PartyMember> playerParty, List<Enemy> enemies)
@@ -129,5 +118,18 @@ public class EnemyTargetPositionManager : MonoBehaviour
         var position = _activePositions[_currentIndex].position;
         position = _camera.WorldToScreenPoint(position) - new Vector3(60f, 0f, 0f);
         MenuCursor.Instance.PlaceAt(position);
+    }
+    
+    void OnDestroy()
+    {
+        BattleEvents.BattleStarted -= OnBattleStarted;
+        BattleEvents.EnemyDied -= OnEnemyDied;
+    }
+
+    void Start()
+    {
+        _camera = Camera.main;
+        BattleEvents.BattleStarted += OnBattleStarted;
+        BattleEvents.EnemyDied += OnEnemyDied;
     }
 }

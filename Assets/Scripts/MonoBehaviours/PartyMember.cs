@@ -40,7 +40,6 @@ public class PartyMember : BattleParticipant
     Collider2D _collider;
     bool _requestedUnlink;
 
-
     public IEnumerator PreTurnAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
         IncreaseMP();
@@ -52,6 +51,7 @@ public class PartyMember : BattleParticipant
 
     public override IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
+        // todo: must find a cleaner way to do this communication with UI
         _selectedEnemyToAttack = null;
         _selectedMagicAttack = null;
         _selectedPartyMemberToLink = null;
@@ -69,20 +69,12 @@ public class PartyMember : BattleParticipant
 
     public override IEnumerator ReceiveAttack(BattleAttack attack)
     {
-        // do animations and other stuff
-
         _animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
-
         if (HasLink)
             _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
 
-        if (HasLink)
-        {
-            _stats.ReduceLinkedHP(attack.Damage);
-            _linkedPartyMember._stats.ReduceLinkedHP(attack.Damage);
-        }
-        else
-            _stats.ReduceCurrentHP(attack.Damage);
+
+        ReduceHP(attack);
 
         BattleEvents.InvokeDamageReceived(attack.Damage, transform.position);
 
@@ -122,8 +114,6 @@ public class PartyMember : BattleParticipant
 
     IEnumerator PerformAttack(List<Enemy> enemies, BattleParticipant attackReceiver)
     {
-        // do animations and other stuff
-
         var attackDefinition = _selectedMagicAttack ??  attacks[UnityEngine.Random.Range(0, attacks.Length)];
         var attack = new BattleAttack(attackDefinition.Damage);
 
@@ -142,6 +132,8 @@ public class PartyMember : BattleParticipant
 
             // cast time can be added to magic attack def
             yield return new WaitForSeconds(2f); 
+
+            // todo: needs to go in SO
             // let magic SO do the casting and spawning
             BattleEvents.InvokePartyMemberFinishedCasting(this);
             yield return SpawnParticles(attackReceiver);
@@ -163,6 +155,7 @@ public class PartyMember : BattleParticipant
             yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
         }
     
+        // todo: needs to go in SO
         // can let magic SO do the damage dealing
         yield return attackReceiver.ReceiveAttack(attack);
 
@@ -183,7 +176,7 @@ public class PartyMember : BattleParticipant
 
     IEnumerator SpawnParticles(BattleParticipant attackReceiver)
     {
-        // needs to go in SO
+        // todo: needs to go in SO
         if (_selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.Single)
         {
             var angle = Vector2.SignedAngle(Vector2.left, (attackReceiver.transform.position - transform.position).normalized);
@@ -204,23 +197,22 @@ public class PartyMember : BattleParticipant
 
     IEnumerator Link(PartyMember partyMember)
     {
-        // do animations and other stuff
-
         if (partyMember.HasLink)
             yield return partyMember.TryUnlink();
+
         if (HasLink)
             yield return TryUnlink();
 
-        yield return new WaitForSeconds(0.5f);    
+        yield return new WaitForSeconds(0.25f);    
 
         HandleLink(partyMember);
         partyMember.HandleLink(this);
+
         BattleEvents.InvokePartyMembersLinked(this, partyMember);
     }
 
     IEnumerator TryUnlink()
     {
-        // do animations and other stuff
         if (_linkedPartyMember == null)
             Debug.Log("Error: Requested to unlink but no linked member registered");
 
@@ -232,14 +224,22 @@ public class PartyMember : BattleParticipant
 
     IEnumerator Unlink()
     {
-        // Debug.Log($"{Name} unlinked from {_linkedPartyMember.Name}");
-        // do animations and stuff
         yield return new WaitForSeconds(0.15f);    
         _linkedPartyMember = null;
         SetMagicAttacks();
         UnsetLinkedStats();
     }
 
+    void ReduceHP(BattleAttack attack)
+    {
+        if (HasLink)
+        {
+            _stats.ReduceLinkedHP(attack.Damage);
+            _linkedPartyMember._stats.ReduceLinkedHP(attack.Damage);
+        }
+        else
+            _stats.ReduceCurrentHP(attack.Damage);
+    }
 
     void ConsumeMP(int amount)
     {
@@ -283,6 +283,12 @@ public class PartyMember : BattleParticipant
         _stats.SetLinkedMP(0);
     }
 
+    void SetStartingStats()
+    {
+        _stats.SetCurrentHP(_stats.BaseHP);
+        _stats.SetCurrentMP(1);
+    }
+
     void SetMagicAttacks()
     {
         _magicAttacks = _magicAttacksStore.GetMagicAttackWithElement(_innateElement);
@@ -314,48 +320,32 @@ public class PartyMember : BattleParticipant
     private void OnEnemyTargetSelected(Enemy enemy) => _selectedEnemyToAttack = enemy;
     private void OnMagicAttackSelected(MagicAttackDefinition magicAttack) => _selectedMagicAttack = magicAttack;
 
-    void Awake()
+    IEnumerator StartIdleAnimationAfterDelay(float delay)
     {
-        _animator = GetComponent<Animator>();
-        StartCoroutine(StartAnimation(UnityEngine.Random.Range(0.15f, 1f)));
-
-        _collider = GetComponent<Collider2D>();
-
-        BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
-        BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
-        BattleEvents.RequestedPartyMembersLink += OnRequestedPartyMembersLink;
-        BattleEvents.RequestedPartyMembersUnlink += OnRequestedPartyMembersUnlink;
-
-        BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
-        BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
-        BattleEvents.RequestedPartyMembersLink += OnRequestedPartyMembersLink;
-        BattleEvents.RequestedPartyMembersUnlink += OnRequestedPartyMembersUnlink;
-        
-        FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
-        SetMagicAttacks();
-        SetStartingStats();
+        yield return new WaitForSeconds(delay);
+        _animator.SetTrigger(IDLE_ANIMATION_TRIGGER_KEY);
     }
-
-    void SetStartingStats()
-    {
-        _stats.SetCurrentHP(_stats.BaseHP);
-        _stats.SetCurrentMP(1);
-    }
-
-    private void OnBattleEnded()
-
+    
+    void OnDestroy()
     {
         BattleEvents.EnemyTargetSelected -= OnEnemyTargetSelected;
         BattleEvents.MagicAttackSelected -= OnMagicAttackSelected;
         BattleEvents.RequestedPartyMembersLink -= OnRequestedPartyMembersLink;
         BattleEvents.RequestedPartyMembersUnlink -= OnRequestedPartyMembersUnlink;
-        FindObjectOfType<BattleController>().BattleEnded -= OnBattleEnded;
     }
 
-
-    IEnumerator StartAnimation(float delay)
+    void Awake()
     {
-        yield return new WaitForSeconds(delay);
-        _animator.SetTrigger(IDLE_ANIMATION_TRIGGER_KEY);
+        _collider = GetComponent<Collider2D>();
+        _animator = GetComponent<Animator>();
+        StartCoroutine(StartIdleAnimationAfterDelay(UnityEngine.Random.Range(0.15f, 1f)));
+
+        BattleEvents.EnemyTargetSelected += OnEnemyTargetSelected;
+        BattleEvents.MagicAttackSelected += OnMagicAttackSelected;
+        BattleEvents.RequestedPartyMembersLink += OnRequestedPartyMembersLink;
+        BattleEvents.RequestedPartyMembersUnlink += OnRequestedPartyMembersUnlink;
+
+        SetMagicAttacks();
+        SetStartingStats();
     }
 }
