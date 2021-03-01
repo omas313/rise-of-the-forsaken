@@ -16,8 +16,8 @@ public class UIPartyMemberStatus : MonoBehaviour
         battleController.PlayerPartyUpdated += OnPlayerPartyUpdated;
         battleController.BattleEnded += OnBattleEnded;
 
-        BattleEvents.RequestedPartyMembersLink += OnPartyMembersLinked;
-        BattleEvents.RequestedPartyMembersUnlink += OnPartyMembersUnlinked;
+        BattleEvents.PartyMembersLinked += OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked += OnPartyMembersUnlinked;
     }
 
     private void OnBattleEnded()
@@ -26,8 +26,8 @@ public class UIPartyMemberStatus : MonoBehaviour
         battleController.PlayerPartyUpdated -= OnPlayerPartyUpdated;
         battleController.BattleEnded -= OnBattleEnded;
 
-        BattleEvents.RequestedPartyMembersLink -= OnPartyMembersLinked;
-        BattleEvents.RequestedPartyMembersUnlink -= OnPartyMembersUnlinked;
+        BattleEvents.PartyMembersLinked -= OnPartyMembersLinked;
+        BattleEvents.PartyMembersUnlinked -= OnPartyMembersUnlinked;
     }
 
     void OnPartyMembersLinked(PartyMember member1, PartyMember member2)
@@ -72,7 +72,6 @@ public class UIPartyMemberStatus : MonoBehaviour
             _playerBars[party[i]] = _bars[i];
             _bars[i].gameObject.SetActive(true);
         }
-
         
 
         var height = 50f + party.Count * 45f;

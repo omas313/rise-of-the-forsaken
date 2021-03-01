@@ -41,23 +41,10 @@ public class PartyMember : BattleParticipant
     bool _requestedUnlink;
 
 
-    // here for now
-    static bool _playedFirstTurnDialogue;
-
     public IEnumerator PreTurnAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
         IncreaseMP();
         yield return null;
-
-        // here for now
-        if (GameManager.Instance.CurrentBattleData.HasPreturnDialogue && !_playedFirstTurnDialogue)
-        {
-            _playedFirstTurnDialogue = true;
-
-            var textPlayer = FindObjectOfType<ChronologicalLinesPlayer>();
-            textPlayer.Init(GameManager.Instance.CurrentBattleData.TextLines);
-            yield return textPlayer.LinePlayer();
-        }
     }
 
     public override void TurnOnCollider() => _collider.enabled = true;
@@ -70,14 +57,14 @@ public class PartyMember : BattleParticipant
         _selectedPartyMemberToLink = null;
         _requestedUnlink = false;
 
-        yield return new WaitUntil(() => _selectedEnemyToAttack != null || _selectedPartyMemberToLink != null || _requestedUnlink);
+        yield return new WaitUntil(() => _selectedEnemyToAttack != null || _selectedPartyMemberToLink != null || _requestedUnlink || Input.GetKeyDown(KeyCode.End));
 
         if (_selectedEnemyToAttack != null)
             yield return PerformAttack(enemies, _selectedEnemyToAttack);
         else if (_selectedPartyMemberToLink != null)
             yield return Link(_selectedPartyMemberToLink);
         else if (_requestedUnlink)
-            yield return TryUnlink();
+            yield return TryUnlink();        
     }
 
     public override IEnumerator ReceiveAttack(BattleAttack attack)
@@ -347,9 +334,6 @@ public class PartyMember : BattleParticipant
         FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
         SetMagicAttacks();
         SetStartingStats();
-
-        _playedFirstTurnDialogue = false;
-
     }
 
     void SetStartingStats()

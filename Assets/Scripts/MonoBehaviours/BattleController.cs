@@ -79,6 +79,13 @@ public class BattleController : MonoBehaviour
 
         _currentIndex = 0;
 
+        var battleIntroAnimation = GameObject.FindWithTag("BattleIntro").GetComponent<Animation>();
+        yield return new WaitUntil(() => !battleIntroAnimation.isPlaying);
+        yield return new WaitForSeconds(0.5f);
+
+        if (_battleDataDefinition.HasPreturnDialogue)
+            yield return PlayPreBattleDialogue();
+
         while (true)
         {
             // Debug.Log("battle loop");
@@ -121,7 +128,14 @@ public class BattleController : MonoBehaviour
             }
         }
 
-        Debug.Log("battle ended");
+        // Debug.Log("battle ended");
+    }
+
+    IEnumerator PlayPreBattleDialogue()
+    {
+        var textPlayer = FindObjectOfType<ChronologicalLinesPlayer>();
+        textPlayer.Init(_battleDataDefinition.TextLines);
+        yield return textPlayer.LinePlayer();
     }
 
     void InitBattleParticipants(List<PartyMember> playerParty, List<Enemy> enemies)

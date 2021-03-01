@@ -478,8 +478,8 @@ MonoBehaviour:
   _victoryPanel: {fileID: 5832290301168199042}
   _defeatPanel: {fileID: 1032316877}
   _fadeInImage: {fileID: 164442198}
-  _setParticipantsManually: 0
-  _battleDataDefinition: {fileID: 11400000, guid: d6037f9e9750c414b996af8a56791a0a, type: 2}
+  _setParticipantsManually: 1
+  _battleDataDefinition: {fileID: 11400000, guid: dc085ed797a266540bbcfd691c61de2b, type: 2}
 --- !u!114 &211494182 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2334096787044380288, guid: 6c959e5095a9e5c449a544b1f2b2dff4, type: 3}
@@ -1875,7 +1875,7 @@ GameObject:
   - component: {fileID: 716998342}
   m_Layer: 5
   m_Name: BattleIntro
-  m_TagString: Untagged
+  m_TagString: BattleIntro
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

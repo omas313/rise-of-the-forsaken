@@ -14,7 +14,6 @@ public class DamageDisplayer : MonoBehaviour
     {
         _texts = GetComponentsInChildren<FloatingText>();
 
-
         BattleEvents.DamageReceived += OnDamageReceived;        
         FindObjectOfType<BattleController>().BattleEnded += OnBattleEnded;
     }
