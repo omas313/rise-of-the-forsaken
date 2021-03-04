@@ -22,6 +22,7 @@ public class PartyMember : BattleParticipant
     public PartyMember LinkedPartyMember => _linkedPartyMember;
     public bool HasLink => _linkedPartyMember != null;
     public bool IsLinkBroken => _stats.LinkedHP <= 0;
+    public Vector3 SpellCastPoint => _spellCasePoint.position;
 
     [SerializeField] MagicAttacksStore _magicAttacksStore;
     [SerializeField] Element _innateElement;
@@ -51,7 +52,7 @@ public class PartyMember : BattleParticipant
 
     public override IEnumerator PerformAction(List<PartyMember> playerParty, List<Enemy> enemies)
     {
-        // todo: must find a cleaner way to do this communication with UI
+        // todo: must find a cleaner way to do this communication with UI, maybe UIEvent pubsub
         _selectedEnemyToAttack = null;
         _selectedMagicAttack = null;
         _selectedPartyMemberToLink = null;
@@ -62,9 +63,9 @@ public class PartyMember : BattleParticipant
         if (_selectedEnemyToAttack != null)
             yield return PerformAttack(enemies, _selectedEnemyToAttack);
         else if (_selectedPartyMemberToLink != null)
-            yield return Link(_selectedPartyMemberToLink);
+            yield return PerformLink(_selectedPartyMemberToLink);
         else if (_requestedUnlink)
-            yield return TryUnlink();        
+            yield return PerformUnlink();        
     }
 
     public override IEnumerator ReceiveAttack(BattleAttack attack)
@@ -73,22 +74,17 @@ public class PartyMember : BattleParticipant
         if (HasLink)
             _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, true);
 
-
         ReduceHP(attack);
 
         BattleEvents.InvokeDamageReceived(attack.Damage, transform.position);
-
         yield return new WaitForSeconds(0.5f);
 
         _animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
-
         if (HasLink)
-        {
             _linkedPartyMember._animator.SetBool(HIT_ANIMATION_BOOL_KEY, false);
 
-            if (IsLinkBroken)
-                yield return TryUnlink();
-        }
+        if (HasLink && IsLinkBroken)
+            yield return PerformUnlink();
     }
 
     public override IEnumerator Die()
@@ -112,96 +108,49 @@ public class PartyMember : BattleParticipant
         return _stats.CurrentMP >= magicAttack.MPCost;
     }
 
+    public void StartCastVisuals()
+    {
+        _castParticles.Play();
+        _animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
+        BattleEvents.InvokePartyMemberIsCasting(this);
+    }
+
+    public void StopCastVisuals()
+    {
+        _castParticles.Stop();
+        _animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
+        BattleEvents.InvokePartyMemberFinishedCasting(this);
+    }
+
     IEnumerator PerformAttack(List<Enemy> enemies, BattleParticipant attackReceiver)
     {
-        var attackDefinition = _selectedMagicAttack ??  attacks[UnityEngine.Random.Range(0, attacks.Length)];
-        var attack = new BattleAttack(attackDefinition.Damage);
-
         if (_selectedMagicAttack)
         {
-            attackReceiver.TurnOnCollider();
-            _castParticles.Play();
-            _animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
-            BattleEvents.InvokePartyMemberIsCasting(this);
-
-            if (_selectedMagicAttack.Elements.Length > 1)
-            {
-                _linkedPartyMember._animator.SetBool(CAST_ANIMATION_BOOL_KEY, true);
-                _linkedPartyMember._castParticles.Play();
-            }
-
-            // cast time can be added to magic attack def
-            yield return new WaitForSeconds(2f); 
-
-            // todo: needs to go in SO
-            // let magic SO do the casting and spawning
-            BattleEvents.InvokePartyMemberFinishedCasting(this);
-            yield return SpawnParticles(attackReceiver);
-            
-            attackReceiver.TurnOffCollider();
-            _castParticles.Stop();
-            _animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
-
-            if (_selectedMagicAttack.Elements.Length > 1)
-            {
-                _linkedPartyMember._animator.SetBool(CAST_ANIMATION_BOOL_KEY, false);
-                _linkedPartyMember._castParticles.Stop();
-            }
+            yield return _selectedMagicAttack.Perform(this, attackReceiver as Enemy, enemies);
+            ConsumeMP(_selectedMagicAttack.MPCost);
         }
         else
         {
             _animator.SetTrigger(ATTACK_ANIMATION_TRIGGER_KEY);
             yield return new WaitForSeconds(0.2f); 
             yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
+            
+            var attack = new BattleAttack(attacks[0].Damage);
+            yield return attackReceiver.ReceiveAttack(attack);
+            IncreaseMP();
         }
     
-        // todo: needs to go in SO
-        // can let magic SO do the damage dealing
-        yield return attackReceiver.ReceiveAttack(attack);
-
-        if (_selectedMagicAttack && _selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.AOE)
-            foreach (var enemy in enemies)
-                if (enemy != attackReceiver)
-                    StartCoroutine(enemy.ReceiveAttack(attack));
-
-        if (_selectedMagicAttack)
-            ConsumeMP(_selectedMagicAttack.MPCost);
-
-        if (!_selectedMagicAttack)
-            IncreaseMP();
-
         // Debug.Log($"{Name} {attackDefinition.Name} does {attackDefinition.Damage} damage to {attackReceiver.Name}");
         yield return new WaitForSeconds(0.5f);    
     }
 
-    IEnumerator SpawnParticles(BattleParticipant attackReceiver)
-    {
-        // todo: needs to go in SO
-        if (_selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.Single)
-        {
-            var angle = Vector2.SignedAngle(Vector2.left, (attackReceiver.transform.position - transform.position).normalized);
-            var rotation = Quaternion.Euler(0f, 0f, angle);
-            var particles = Instantiate(_selectedMagicAttack.EffectPrefab, _spellCasePoint.position, rotation);
-            var particleSystemMain = particles.GetComponent<ParticleSystem>().main;
-            particleSystemMain.startRotation = new ParticleSystem.MinMaxCurve(Mathf.Deg2Rad * -angle);
-
-            var magicAttackHandler = particles.GetComponent<AttackParticleEventHandler>();
-            yield return new WaitUntil(() => magicAttackHandler.HasFinished || magicAttackHandler.HasMadeImpact);
-        }
-        else if (_selectedMagicAttack.MagicAttackTargetType == MagicAttackTargetType.AOE)
-        {
-            var magicAttackHandler = Instantiate(_selectedMagicAttack.EffectPrefab).GetComponent<AttackParticleEventHandler>();
-            yield return new WaitUntil(() => magicAttackHandler.HasFinished || magicAttackHandler.HasMadeImpact);
-        }
-    }
-
-    IEnumerator Link(PartyMember partyMember)
+    IEnumerator PerformLink(PartyMember partyMember)
     {
         if (partyMember.HasLink)
-            yield return partyMember.TryUnlink();
+            yield return partyMember.PerformUnlink();
 
         if (HasLink)
-            yield return TryUnlink();
+            yield return PerformUnlink();
 
         yield return new WaitForSeconds(0.25f);    
 
@@ -211,7 +160,7 @@ public class PartyMember : BattleParticipant
         BattleEvents.InvokePartyMembersLinked(this, partyMember);
     }
 
-    IEnumerator TryUnlink()
+    IEnumerator PerformUnlink()
     {
         if (_linkedPartyMember == null)
             Debug.Log("Error: Requested to unlink but no linked member registered");

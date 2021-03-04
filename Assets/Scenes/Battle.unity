@@ -479,7 +479,7 @@ MonoBehaviour:
   _defeatPanel: {fileID: 1032316877}
   _fadeInImage: {fileID: 164442198}
   _setParticipantsManually: 1
-  _battleDataDefinition: {fileID: 11400000, guid: dc085ed797a266540bbcfd691c61de2b, type: 2}
+  _battleDataDefinition: {fileID: 11400000, guid: 28058a83499c52241a47d72f2dcfc1bf, type: 2}
 --- !u!114 &211494182 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2334096787044380288, guid: 6c959e5095a9e5c449a544b1f2b2dff4, type: 3}
